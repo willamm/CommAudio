@@ -9,6 +9,9 @@
 *.dll
 *.dylib
 
+# Sound files for testing
+*.wav
+
 # Qt-es
 object_script.*.Release
 object_script.*.Debug

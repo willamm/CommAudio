@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QFileDialog>
+#include <QMediaPlayer>
 
 namespace Ui {
 class MainWindow;
@@ -17,6 +19,7 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    QString fileName;
 };
 
 #endif // MAINWINDOW_H
