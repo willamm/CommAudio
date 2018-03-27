@@ -25,8 +25,8 @@ public:
 private:
     Ui::MainWindow* m_ui;
 
-    std::unique_ptr<MediaServer> m_server;
-    std::unique_ptr<VoiceChatController> m_voiceChat;
+    MediaServer* m_server;
+    VoiceChatController* m_voiceChat;
     QString fileName;
 };
 
