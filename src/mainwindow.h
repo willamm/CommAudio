@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 #include <QFileDialog>
-#include <QMediaPlayer>
+#include <QTime>
 
 #include <memory>
 
@@ -21,13 +21,18 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     virtual ~MainWindow();
+    void updateDurationInfo(double currentInfoD);
 
+private slots:
+    void durationChanged(qint64 position);
 private:
     Ui::MainWindow* m_ui;
 
     MediaServer* m_server;
     VoiceChatController* m_voiceChat;
     QString fileName;
+    quint64 duration;
+    bool playing;
 };
 
 #endif // MAINWINDOW_H
