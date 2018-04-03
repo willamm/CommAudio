@@ -156,6 +156,23 @@
       </item>
      </layout>
     </item>
+    <item>
+     <widget class="QLabel" name="volumeLabel">
+      <property name="text">
+       <string>Volume</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QScrollBar" name="volumeControl">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
