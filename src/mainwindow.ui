@@ -59,13 +59,6 @@
     <item>
      <layout class="QHBoxLayout" name="songStatusLayout">
       <item>
-       <widget class="QLabel" name="left">
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QSlider" name="horizontalSlider">
         <property name="styleSheet">
          <string notr="true"/>
@@ -75,17 +68,17 @@
         </property>
        </widget>
       </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="controlsLayout">
       <item>
-       <widget class="QLabel" name="right">
+       <widget class="QLabel" name="left">
         <property name="text">
          <string/>
         </property>
        </widget>
       </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="controlsLayout">
       <item>
        <spacer name="horizontalSpacer">
         <property name="orientation">
@@ -93,7 +86,7 @@
         </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>40</width>
+          <width>30</width>
           <height>20</height>
          </size>
         </property>
@@ -102,7 +95,7 @@
       <item>
        <widget class="QPushButton" name="rewindBtn">
         <property name="text">
-         <string>Rewind</string>
+         <string>Prev</string>
         </property>
         <property name="icon">
          <iconset>
@@ -133,7 +126,7 @@
       <item>
        <widget class="QPushButton" name="fastForwardBtn">
         <property name="text">
-         <string>Fast Forward</string>
+         <string>Next</string>
         </property>
         <property name="icon">
          <iconset>
@@ -148,13 +141,37 @@
         </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>40</width>
+          <width>30</width>
           <height>20</height>
          </size>
         </property>
        </spacer>
       </item>
+      <item>
+       <widget class="QLabel" name="right">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
      </layout>
+    </item>
+    <item>
+     <widget class="QLabel" name="volumeLabel">
+      <property name="text">
+       <string>Volume</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QScrollBar" name="volumeControl">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -164,7 +181,7 @@
      <x>0</x>
      <y>0</y>
      <width>627</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
