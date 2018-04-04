@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>627</width>
-    <height>400</height>
+    <width>806</width>
+    <height>543</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>CommAudio</string>
+   <string>QTify Audio Player</string>
   </property>
   <property name="toolTipDuration">
    <number>-1</number>
@@ -25,12 +25,33 @@
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>Playlist</string>
+      </property>
+     </widget>
+    </item>
+    <item>
      <layout class="QHBoxLayout" name="musicListLayout">
       <property name="spacing">
        <number>6</number>
       </property>
       <item>
-       <widget class="QTreeWidget" name="treeWidget">
+       <widget class="QTreeWidget" name="playList">
+        <column>
+         <property name="text">
+          <string>Song Title</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Artist</string>
+         </property>
+        </column>
+       </widget>
+      </item>
+      <item>
+       <widget class="QTreeWidget" name="clientList">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
           <horstretch>1</horstretch>
@@ -42,16 +63,6 @@
           <string>Connected Servers</string>
          </property>
         </column>
-       </widget>
-      </item>
-      <item>
-       <widget class="QTableWidget" name="tableWidget">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-          <horstretch>2</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
        </widget>
       </item>
      </layout>
@@ -113,7 +124,7 @@
         </property>
         <property name="icon">
          <iconset>
-          <normaloff>../../Source/Repos/comm-audio/CommAudio/Resources/icons/ic_play_arrow_black_24dp_2x.png</normaloff>../../Source/Repos/comm-audio/CommAudio/Resources/icons/ic_play_arrow_black_24dp_2x.png</iconset>
+          <normaloff>../../../../../../../../Downloads/noun_72260_cc.png</normaloff>../../../../../../../../Downloads/noun_72260_cc.png</iconset>
         </property>
         <property name="autoRepeatDelay">
          <number>300</number>
@@ -127,10 +138,6 @@
        <widget class="QPushButton" name="fastForwardBtn">
         <property name="text">
          <string>Next</string>
-        </property>
-        <property name="icon">
-         <iconset>
-          <normaloff>../../Source/Repos/comm-audio/CommAudio/Resources/icons/ic_fast_forward_black_24dp_2x.png</normaloff>../../Source/Repos/comm-audio/CommAudio/Resources/icons/ic_fast_forward_black_24dp_2x.png</iconset>
         </property>
        </widget>
       </item>
@@ -180,7 +187,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>627</width>
+     <width>806</width>
      <height>22</height>
     </rect>
    </property>
@@ -196,8 +203,10 @@
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
-     <string>Edit</string>
+     <string>Stream</string>
     </property>
+    <addaction name="actionConnect"/>
+    <addaction name="actionRequest"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -251,6 +260,16 @@
   <action name="actionAdd_server">
    <property name="text">
     <string>Add server</string>
+   </property>
+  </action>
+  <action name="actionConnect">
+   <property name="text">
+    <string>Connect</string>
+   </property>
+  </action>
+  <action name="actionRequest">
+   <property name="text">
+    <string>Request</string>
    </property>
   </action>
  </widget>

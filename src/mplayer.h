@@ -48,6 +48,7 @@ public:
     mPlayer();
     virtual ~mPlayer();
     QMediaPlayer* control();
+    QMediaPlaylist* getPlaylist();
     bool addToQueue(const QMediaContent &content);
 
 public slots:

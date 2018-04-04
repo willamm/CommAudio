@@ -48,6 +48,9 @@
 
 #include "mediaserver.h"
 #include "voicechatcontroller.h"
+#include "mediaclient.h"
+#include "ui_mainwindow.h"
+#include "mplayer.h"
 
 namespace Ui {
 class MainWindow;
@@ -62,6 +65,9 @@ public:
     virtual ~MainWindow();
     void updateDurationInfo(double currentInfoD);
 
+signals:
+    void addedMedia();
+
 private slots:
     void durationChanged(qint64 position);
     void positionChanged(qint64 progress);
@@ -69,11 +75,14 @@ private slots:
     void seek(int value);
     void previous();
     bool exit(bool clicked);
+    void updateClientList(QTcpSocket* socket);
+    void updatePlayList();
 
 private:
     Ui::MainWindow* m_ui;
     mPlayer* player;
     MediaServer* m_server;
+    MediaClient* m_client;
     VoiceChatController* m_voiceChat;
     QString fileName;
     quint64 duration;
