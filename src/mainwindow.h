@@ -9,6 +9,8 @@
 
 #include "mediaserver.h"
 #include "voicechatcontroller.h"
+#include "client.h"
+#include "server.h"
 
 namespace Ui {
 class MainWindow;
@@ -22,10 +24,16 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     virtual ~MainWindow();
 
+public slots:
+    void getFileInputName();
+    void getFileOutputName();
+
 private:
     Ui::MainWindow* m_ui;
 
-    MediaServer* m_server;
+    //MediaServer* m_server;
+    Client* m_client;
+    Server* m_server;
     VoiceChatController* m_voiceChat;
     QString fileName;
 };
