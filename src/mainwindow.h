@@ -67,6 +67,9 @@ private slots:
     void positionChanged(qint64 progress);
     void setVolume(int value);
     void seek(int value);
+    void previous();
+    bool exit(bool clicked);
+
 private:
     Ui::MainWindow* m_ui;
     mPlayer* player;

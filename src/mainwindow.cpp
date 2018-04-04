@@ -49,12 +49,12 @@ MainWindow::MainWindow(QWidget *parent)
 {
     player = new mPlayer;
     m_ui->setupUi(this);
-    m_ui->horizontalSlider->setTickInterval(QSlider::TicksBothSides);
+//    m_ui->horizontalSlider->setTickInterval(QSlider::TicksBothSides);
 
 
     connect(m_ui->actionStart_session, &QAction::triggered, m_voiceChat, &VoiceChatController::hostSession);
     connect(m_ui->actionJoin_session, &QAction::triggered, m_voiceChat, &VoiceChatController::joinSession);
-
+    connect(m_ui->actionExit, SIGNAL(triggered(bool)), this, SLOT(exit(bool)));
     // Mediaplayer setup
     connect(m_ui->actionAdd_file, &QAction::triggered, this, [this] (){
        fileName = QFileDialog::getOpenFileName(this, tr("Open file"));
@@ -62,7 +62,7 @@ MainWindow::MainWindow(QWidget *parent)
     });
     connect(m_ui->playPauseBtn, SIGNAL(clicked(bool)), player, SLOT(play()));
     connect(m_ui->fastForwardBtn, SIGNAL(clicked(bool)), player, SLOT(next()));
-    connect(m_ui->rewindBtn, SIGNAL(clicked(bool)), player, SLOT(prev()));
+    connect(m_ui->rewindBtn, SIGNAL(clicked(bool)), this, SLOT(previous()));
     connect(player->control(), SIGNAL(durationChanged(qint64)), this, SLOT(durationChanged(qint64)));
     connect(player->control(), SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
     connect(m_ui->horizontalSlider, SIGNAL(sliderMoved(int)), this, SLOT(seek(int)));
@@ -77,12 +77,29 @@ MainWindow::~MainWindow()
     delete m_ui;
 }
 
+bool MainWindow::exit(bool clicked) {
+    if (clicked) {
+        QApplication::quit();
+    } else {
+        QApplication::quit();
+    }
+    return true;
+}
+
+void MainWindow::previous() {
+    if (player->control()->position() <= 3000) {
+        player->prev();
+    } else {
+        player->control()->setPosition(0);
+    }
+}
+
 void MainWindow::setVolume(int value) {
     player->control()->setVolume(value);
 }
 
 void MainWindow::seek(int value) {
-    player->control()->setPosition(value / SLIDER_DIVISOR);
+    player->control()->setPosition(value);
 }
 void MainWindow::durationChanged(qint64 duration) {
     this->duration = duration/1000;
@@ -91,7 +108,7 @@ void MainWindow::durationChanged(qint64 duration) {
 
 void MainWindow::positionChanged(qint64 progress) {
     if(!m_ui->horizontalSlider->isSliderDown()) {
-        m_ui->horizontalSlider->setValue(progress/ SLIDER_DIVISOR);
+        m_ui->horizontalSlider->setValue(progress);
     }
     updateDurationInfo(progress/1000);
 }
@@ -102,11 +119,8 @@ void MainWindow::updateDurationInfo(double currentInfoD)
     QString rStr;
     QString lStr;
     if (currentInfo || duration) {
-        QTime currentTime((currentInfo/3600)%60, // hr
-                          (currentInfo/60)%60, // min
-                          currentInfo%60, // sec
-                          ((qint64)(currentInfoD*1000))%1000 // ms
-                          );
+        QTime currentTime((currentInfo/3600)%60, (currentInfo/60)%60, currentInfo%60,
+            ((qint64)(currentInfoD*1000))%1000);
         QTime totalTime((duration/3600)%60, (duration/60)%60, duration%60, (duration*1000)%1000);
         QString format = "mm:ss";
         QString format2 = "mm:ss";
