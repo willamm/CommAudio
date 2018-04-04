@@ -5,11 +5,13 @@ SOURCES += main.cpp mainwindow.cpp \
     mediaserver.cpp \
     voicechatcontroller.cpp \
     utilities.cpp \
-    mplayer.cpp
+    mplayer.cpp \
+    mediaclient.cpp
 HEADERS += mainwindow.h \
     mediaserver.h \
     voicechatcontroller.h \
     utilities.h \
-    mplayer.h
+    mplayer.h \
+    mediaclient.h
 FORMS += mainwindow.ui \
     voicechatcontroller.ui

@@ -38,27 +38,27 @@
 ----------------------------------------------------------------------------------------------------------------------*/
 
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
-#include "mplayer.h"
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_ui(new Ui::MainWindow)
     , m_server(new MediaServer(this, 5150))
+    , m_client(new MediaClient(this))
+    , player(new mPlayer)
     , m_voiceChat(new VoiceChatController(this))
 {
-    player = new mPlayer;
     m_ui->setupUi(this);
-//    m_ui->horizontalSlider->setTickInterval(QSlider::TicksBothSides);
 
-
+    connect(this, SIGNAL(addedMedia()), this, SLOT(updatePlayList()));
     connect(m_ui->actionStart_session, &QAction::triggered, m_voiceChat, &VoiceChatController::hostSession);
     connect(m_ui->actionJoin_session, &QAction::triggered, m_voiceChat, &VoiceChatController::joinSession);
+    connect(m_ui->actionConnect, &QAction::triggered, m_client, &MediaClient::getIP);
     connect(m_ui->actionExit, SIGNAL(triggered(bool)), this, SLOT(exit(bool)));
-    // Mediaplayer setup
     connect(m_ui->actionAdd_file, &QAction::triggered, this, [this] (){
        fileName = QFileDialog::getOpenFileName(this, tr("Open file"));
        player->addToQueue(QUrl::fromLocalFile(fileName));
+       emit addedMedia();
     });
     connect(m_ui->playPauseBtn, SIGNAL(clicked(bool)), player, SLOT(play()));
     connect(m_ui->fastForwardBtn, SIGNAL(clicked(bool)), player, SLOT(next()));
@@ -69,6 +69,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_ui->volumeControl, SIGNAL(valueChanged(int)), this, SLOT(setVolume(int)));
     m_ui->volumeControl->setValue(50);
     m_ui->horizontalSlider->setRange(0, player->control()->duration()/ 10000);
+    connect(m_server, SIGNAL(updateMainWindow(QTcpSocket*)), this, SLOT(updateClientList(QTcpSocket*)));
 
 }
 
@@ -76,6 +77,19 @@ MainWindow::~MainWindow()
 {
     delete m_ui;
 }
+
+//void MainWindow::getFileInputName()
+//{
+
+//    //fileName = QFileDialog::getOpenFileName(this, tr("Open file"));
+//    QString fileName = QFileDialog::getOpenFileName(this, tr("Choose File to Send"), "./", tr("Text File (*.mp3)"));
+//    qInfo() << "new file: \n" + fileName;
+
+//    m_client->inputFile.open(fileName.toStdString(), std::ios_base::binary);
+
+//    m_client->getIP();
+
+//}
 
 bool MainWindow::exit(bool clicked) {
     if (clicked) {
@@ -131,4 +145,35 @@ void MainWindow::updateDurationInfo(double currentInfoD)
     }
     m_ui->left->setText(lStr);
     m_ui->right->setText(rStr);
+}
+
+void MainWindow::updatePlayList() {
+    QTreeWidgetItem *playlistItem = new QTreeWidgetItem(m_ui->playList);
+    QStringList metaData = player->getPlaylist()->mediaObject()->availableMetaData();
+    qInfo() << metaData;
+    playlistItem->setText(0, "Out my Mind");
+    playlistItem->setText(1, "Tritonal");
+}
+
+void MainWindow::updateClientList(QTcpSocket* socket) {
+    QTreeWidgetItem *newClient = new QTreeWidgetItem(m_ui->clientList);
+//    auto it = m_server->getClients().begin();
+//    for (; it != m_server->getClients().end(); ++it) {
+//        QTcpSocket* temp = *it;
+////        QString clientID = temp->localAddress();
+////        char *str=(char *)malloc(1000);
+////        QByteArray ba = clientID.toLatin1();
+//        qInfo() << clientID;
+////        strcpy(str,ba.data());
+////        newClient->setText(0, tr(str));
+//    }
+    /*
+    QString clientID = socket->localAddress().scopeId();
+    char *str=(char *)malloc(10);
+    QByteArray ba = clientID.toLatin1();
+    qInfo() << clientID;
+    strcpy(str,ba.data());
+    */
+    newClient->setText(0, tr("NEW CONNECTION"));
+
 }

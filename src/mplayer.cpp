@@ -92,6 +92,10 @@ QMediaPlayer* mPlayer::control() {
     return player;
 }
 
+QMediaPlaylist* mPlayer::getPlaylist() {
+    return playlist;
+}
+
 // WRAPPERS
 bool mPlayer::addToQueue(const QMediaContent &content) {
     return playlist->addMedia(content);
