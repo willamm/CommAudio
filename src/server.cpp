@@ -35,6 +35,6 @@ void Server::onNewConnection()
 
 void Server::readyRead()//QString fileName)
 {
-   outputFile << m_server_client_sock->readAll().toHex().toStdString();
+   outputFile << m_server_client_sock->readAll().toStdString();
    //qInfo() << m_server_client_sock->readAll().toHex();
 }

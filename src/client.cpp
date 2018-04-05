@@ -14,23 +14,33 @@ void Client::connectClient()
     m_client_sock.connectToHost(ip, 5150);
 
     //connect(&m_server_sock, &QTcpServer::newConnection, this, &Server::onNewConnection);
-    char buffer[8192];
-    QByteArray byteArr;
-    byteArr.resize(4096);
-    int packetSize = 4096;
+    //char buffer[8192];
 
+    //byteArr.resize(4096);
+    //int packetSize = 4096;
+
+    QFile file(fileName);
+    file.open(QIODevice::ReadOnly);// | QIODevice::Text);
+
+
+    QByteArray byteArr;
+    qInfo() << fileName;
     int i = 0;
-    while (!inputFile.eof())
+    while (!file.atEnd())
     {
         i++;
 
-        memset(buffer, '\0', packetSize + 1);
-        inputFile.read(buffer, packetSize);
-        byteArr.append(buffer);
+        byteArr = file.readLine();
         m_client_sock.write(byteArr);
-        qInfo() << "1 sent "  << byteArr << "\n";
-        //qInfo() << "2 sent "  << byteArr.toHex() << "\n";
-        byteArr.clear();
+        qInfo() << "1 sent "  << i << "\n";
+
+
+//        memset(buffer, '\0', packetSize + 1);
+//        inputFile.read(buffer, packetSize);
+//        byteArr.append(buffer);
+//        m_client_sock.write(byteArr);
+//        qInfo() << "1 sent "  << byteArr << "\n";
+//        byteArr.clear();
 
 
     }

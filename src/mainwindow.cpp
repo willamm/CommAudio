@@ -40,10 +40,12 @@ void MainWindow::getFileInputName()
 {
 
     //fileName = QFileDialog::getOpenFileName(this, tr("Open file"));
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Choose File to Send"), "./", tr("Text File (*.mp3)"));
-    qInfo() << "new file: \n" + fileName;
+    QString ff = QFileDialog::getOpenFileName(this, tr("Choose File to Send"), "./", tr("Text File (*.wav)"));
+    qInfo() << "new file: \n" + ff;
 
-    m_client->inputFile.open(fileName.toStdString(), std::ios_base::binary);
+    //m_client->inputFile.open(fileName.toStdString());
+
+    m_client->fileName = ff;
 
     m_client->connectClient();
 
@@ -55,7 +57,7 @@ void MainWindow::getFileOutputName()
 {
 
     //fileName = QFileDialog::getOpenFileName(this, tr("Open file"));
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Choose File to Save to"), "./", tr("Text File (*.mp3)"));
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Choose File to Save to"), "./", tr("Text File (*.wav)"));
     qInfo() << "new file: \n" + fileName;
 
     m_server->outputFile.open(fileName.toStdString(), std::ios_base::binary);

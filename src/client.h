@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QTcpSocket>
 #include <fstream>
+#include <QFile>
 
 class Client : public QObject
 {
@@ -12,7 +13,8 @@ class Client : public QObject
 public:
     explicit Client(QObject *parent = nullptr);
 
-    std::ifstream inputFile;
+    //std::ifstream inputFile;
+    QString fileName;
 
 
 public slots:
