@@ -6,6 +6,7 @@
 #include <fstream>
 #include <QInputDialog>
 #include <QLineEdit>
+#include <string.h>
 
 class MediaClient : public QObject
 {
@@ -14,11 +15,13 @@ class MediaClient : public QObject
 
 public:
     explicit MediaClient(QObject *parent = nullptr);
-    std::ifstream inputFile;
+    std::ofstream outputFile;
+    QString fileName;
 
 public slots:
     void connectClient();
-    void getIP();
+    void getReqInfo();
+    void readyRead();
 
 private:
     QTcpSocket m_client_sock;

@@ -20,6 +20,7 @@ void MediaServer::onNewConnection()
     QTcpSocket* socket = m_server.nextPendingConnection();
     clients.push_back(socket);
     qInfo() << "New client successfully connected.\n";
+    connect(socket, SIGNAL(readyRead()), this, SLOT(readyStream()));
     emit updateMainWindow(socket);
 
 }
@@ -30,8 +31,47 @@ std::vector<QTcpSocket*> MediaServer::getClients() {
 
 void MediaServer::readyStream()//QString fileName)
 {
-//   outputFile << m_server_client_sock->readAll().toHex().toStdString();
-   //qInfo() << m_server_client_sock->readAll().toHex();
+
+
+    QString filePath = "C:/Users/Matt/Music/";
+
+    for(int i = 0; i < clients.size(); i++) {
+        QString temp = clients.at(i)->readAll();
+        filePath.append(temp);
+        qInfo() << filePath;
+
+        if (fileExists(filePath)) {
+            QFile file(filePath);
+
+            file.open(QIODevice::ReadOnly);
+
+            QByteArray byteArr;
+
+            while (!file.atEnd())
+            {
+                qInfo() << "Hi\n";
+
+                byteArr = file.readLine();
+                clients.at(i)->write(byteArr);
+
+            }
+            qInfo() << "done\n";
+
+            file.close();
+            qInfo() << "closed\n";
+        }
+
+    }
+
+
+}
+
+
+
+
+bool MediaServer::fileExists(QString path) {
+    QFileInfo check_file(path);
+    return check_file.exists() && check_file.isFile();
 }
 
 

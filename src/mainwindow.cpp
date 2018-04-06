@@ -53,7 +53,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this, SIGNAL(addedMedia()), this, SLOT(updatePlayList()));
     connect(m_ui->actionStart_session, &QAction::triggered, m_voiceChat, &VoiceChatController::hostSession);
     connect(m_ui->actionJoin_session, &QAction::triggered, m_voiceChat, &VoiceChatController::joinSession);
-    connect(m_ui->actionConnect, &QAction::triggered, m_client, &MediaClient::getIP);
+    connect(m_ui->actionConnect, &QAction::triggered, m_client, &MediaClient::getReqInfo);
     connect(m_ui->actionExit, SIGNAL(triggered(bool)), this, SLOT(exit(bool)));
     connect(m_ui->actionAdd_file, &QAction::triggered, this, [this] (){
        fileName = QFileDialog::getOpenFileName(this, tr("Open file"));
