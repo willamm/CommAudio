@@ -5,6 +5,9 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <vector>
+#include <QFileInfo>
+#include <QFile>
+
 
 class MediaServer : public QObject
 {
@@ -12,6 +15,7 @@ class MediaServer : public QObject
 public:
     explicit MediaServer(QObject *parent = nullptr, int port = 0);
     std::vector<QTcpSocket*> getClients();
+    bool fileExists(QString path);
 
 signals:
     void updateMainWindow(QTcpSocket*);
@@ -21,6 +25,7 @@ public slots:
     void readyStream();
 
 private:
+
     QTcpServer m_server;
     std::vector<QTcpSocket*> clients;
 };
