@@ -13,10 +13,12 @@ MediaServer::MediaServer(QObject *parent, int port) : QObject(parent)
     }
     connect(&m_server, &QTcpServer::newConnection, this, &MediaServer::onNewConnection);
     qInfo() << "Server ready.\n";
+
 }
 
 void MediaServer::onNewConnection()
 {
+
     QTcpSocket* socket = m_server.nextPendingConnection();
     clients.push_back(socket);
     qInfo() << "New client successfully connected.\n";
@@ -31,8 +33,6 @@ std::vector<QTcpSocket*> MediaServer::getClients() {
 
 void MediaServer::readyStream()//QString fileName)
 {
-
-
     QString filePath = "C:/Users/Matt/Music/";
 
     for(int i = 0; i < clients.size(); i++) {
@@ -46,24 +46,13 @@ void MediaServer::readyStream()//QString fileName)
             file.open(QIODevice::ReadOnly);
 
             QByteArray byteArr;
-
-            while (!file.atEnd())
-            {
-                qInfo() << "Hi\n";
-
-                byteArr = file.readLine();
-                clients.at(i)->write(byteArr);
-
-            }
-            qInfo() << "done\n";
+            byteArr = file.readAll();
+            clients.at(i)->write(byteArr);
 
             file.close();
-            qInfo() << "closed\n";
+            qInfo() << "file sent\n";
         }
-
     }
-
-
 }
 
 

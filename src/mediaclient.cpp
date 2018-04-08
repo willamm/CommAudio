@@ -2,7 +2,7 @@
 
 MediaClient::MediaClient(QObject *parent) : QObject(parent)
 {
-
+    timer = new QTimer(this);
 }
 
 void MediaClient::connectClient()
@@ -19,6 +19,8 @@ void MediaClient::connectClient()
     m_client_sock.write(temp);
 
     connect(&m_client_sock, SIGNAL(readyRead()), this, SLOT(readyRead()));
+    connect(timer, SIGNAL(timeout()), this, SLOT(closeFile()));
+    timer->start(2000);
 
 
 }
@@ -34,9 +36,7 @@ void MediaClient::getReqInfo() {
     }
 
     QString filePath = "C:/Users/Matt/Music/Client_";
-
     filePath.append(file);
-
     outputFile.open(filePath.toStdString(), std::ios_base::binary);
 }
 
@@ -46,19 +46,18 @@ void MediaClient::getReqInfo() {
 
 void MediaClient::readyRead()
 {
-
-
     outputFile << m_client_sock.readAll().toStdString();
-//    qInfo() << temp.c_str();
-
-//    if (temp.size() == 0) {
-//        outputFile.close();
-//    } else {
-//        outputFile << temp;
-//    }
-    //outputFile << temp;
-
+    timer->start(2000);
 }
+
+
+
+
+void MediaClient::closeFile()
+{
+    outputFile.close();
+}
+
 
 
 

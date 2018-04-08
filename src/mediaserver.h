@@ -8,6 +8,7 @@
 #include <QFileInfo>
 #include <QFile>
 
+
 class MediaServer : public QObject
 {
     Q_OBJECT
@@ -24,6 +25,7 @@ public slots:
     void readyStream();
 
 private:
+
     QTcpServer m_server;
     std::vector<QTcpSocket*> clients;
 };

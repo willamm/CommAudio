@@ -7,6 +7,7 @@
 #include <QInputDialog>
 #include <QLineEdit>
 #include <string.h>
+#include <QTimer>
 
 class MediaClient : public QObject
 {
@@ -22,8 +23,10 @@ public slots:
     void connectClient();
     void getReqInfo();
     void readyRead();
+    void closeFile();
 
 private:
+    QTimer * timer;
     QTcpSocket m_client_sock;
     QString ipAddress;
 
