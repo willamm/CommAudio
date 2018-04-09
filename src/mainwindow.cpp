@@ -39,13 +39,12 @@
 
 #include "mainwindow.h"
 
-
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_ui(new Ui::MainWindow)
+    , player(new mPlayer)
     , m_server(new MediaServer(this, 5150))
     , m_client(new MediaClient(this))
-    , player(new mPlayer)
     , m_voiceChat(new VoiceChatController(this))
 {
     m_ui->setupUi(this);
@@ -78,18 +77,16 @@ MainWindow::~MainWindow()
     delete m_ui;
 }
 
-//void MainWindow::getFileInputName()
-//{
+void MainWindow::getFileInputName()
+{
 
-//    //fileName = QFileDialog::getOpenFileName(this, tr("Open file"));
-//    QString fileName = QFileDialog::getOpenFileName(this, tr("Choose File to Send"), "./", tr("Text File (*.mp3)"));
-//    qInfo() << "new file: \n" + fileName;
+    //fileName = QFileDialog::getOpenFileName(this, tr("Open file"));
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Choose File to Send"), "./", tr("Text File (*.mp3)"));
+    qInfo() << "new file: \n" + fileName;
 
-//    m_client->inputFile.open(fileName.toStdString(), std::ios_base::binary);
+    m_server->inputFile.open(fileName.toStdString(), std::ios_base::binary);
 
-//    m_client->getIP();
-
-//}
+}
 
 bool MainWindow::exit(bool clicked) {
     if (clicked) {
@@ -149,10 +146,8 @@ void MainWindow::updateDurationInfo(double currentInfoD)
 
 void MainWindow::updatePlayList() {
     QTreeWidgetItem *playlistItem = new QTreeWidgetItem(m_ui->playList);
-    QStringList metaData = player->getPlaylist()->mediaObject()->availableMetaData();
-    qInfo() << metaData;
-    playlistItem->setText(0, "Out my Mind");
-    playlistItem->setText(1, "Tritonal");
+    playlistItem->setText(0, player->control()->metaData(QMediaMetaData::Title).toString());
+    playlistItem->setText(1, player->control()->metaData(QMediaMetaData::Author).toString());
 }
 
 void MainWindow::updateClientList(QTcpSocket* socket) {

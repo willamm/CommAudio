@@ -1,6 +1,7 @@
 #include "mediaclient.h"
 
 MediaClient::MediaClient(QObject *parent) : QObject(parent)
+  , connected(false)
 {
 
 }
@@ -11,6 +12,7 @@ void MediaClient::connectClient()
             [=](QAbstractSocket::SocketError socketError){
         qInfo() << m_client_sock.errorString(); });
     m_client_sock.connectToHost(ipAddress, 5150);
+    connected = true;
 
     /*
     char buffer[8192];
@@ -47,3 +49,6 @@ void MediaClient::getIP() {
     }
 }
 
+void MediaClient::stream() {
+
+}

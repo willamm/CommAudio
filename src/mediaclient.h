@@ -15,6 +15,7 @@ class MediaClient : public QObject
 public:
     explicit MediaClient(QObject *parent = nullptr);
     std::ifstream inputFile;
+    void stream();
 
 public slots:
     void connectClient();
@@ -23,6 +24,7 @@ public slots:
 private:
     QTcpSocket m_client_sock;
     QString ipAddress;
+    bool connected;
 
 };
 

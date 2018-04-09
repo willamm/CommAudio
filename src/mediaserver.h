@@ -5,6 +5,7 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <vector>
+#include <fstream>
 
 class MediaServer : public QObject
 {
@@ -12,6 +13,7 @@ class MediaServer : public QObject
 public:
     explicit MediaServer(QObject *parent = nullptr, int port = 0);
     std::vector<QTcpSocket*> getClients();
+    std::ifstream inputFile;
 
 signals:
     void updateMainWindow(QTcpSocket*);

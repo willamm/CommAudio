@@ -35,4 +35,5 @@ void MediaServer::readyStream()//QString fileName)
 }
 
 
+std::ifstream inputFile;
 
