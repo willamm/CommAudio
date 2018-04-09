@@ -27,11 +27,11 @@ public slots:
 signals:
     void sessionStarted();
     void sessionJoined();
+
 private:
     Ui::VoiceChatController *ui;
     QAudioInput* m_input;
     QAudioDeviceInfo m_deviceInfo;
-
     QTcpServer* m_chatServer;
 };
 

@@ -45,7 +45,7 @@ class mPlayer : public QObject
     Q_OBJECT
 
 public:
-    mPlayer();
+    explicit mPlayer(QObject* parent = nullptr);
     virtual ~mPlayer();
     QMediaPlayer* control();
     QMediaPlaylist* getPlaylist();
