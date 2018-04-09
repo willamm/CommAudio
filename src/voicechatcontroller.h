@@ -29,10 +29,15 @@ signals:
     void sessionJoined();
 
 private:
+    // FUNCTIONS
+    void onSessionStart();
+
+
     Ui::VoiceChatController *ui;
     QAudioInput* m_input;
     QAudioDeviceInfo m_deviceInfo;
     QTcpServer* m_chatServer;
 };
+
 
 #endif // VOICECHATCONTROLLER_H
