@@ -11,11 +11,12 @@
 
 class MediaClient : public QObject
 {
-
     Q_OBJECT
 
 public:
     explicit MediaClient(QObject *parent = nullptr);
+    std::ifstream inputFile;
+    void stream();
     std::ofstream outputFile;
     QString fileName;
 
@@ -29,6 +30,7 @@ private:
     QTimer * timer;
     QTcpSocket m_client_sock;
     QString ipAddress;
+    bool connected;
 
 };
 

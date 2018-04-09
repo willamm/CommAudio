@@ -3,11 +3,12 @@
 
 #include <QObject>
 #include <QTcpServer>
+#include <QUdpSocket>
 #include <QTcpSocket>
 #include <vector>
+#include <fstream>
 #include <QFileInfo>
 #include <QFile>
-
 
 class MediaServer : public QObject
 {
@@ -15,6 +16,7 @@ class MediaServer : public QObject
 public:
     explicit MediaServer(QObject *parent = nullptr, int port = 0);
     std::vector<QTcpSocket*> getClients();
+    std::ifstream inputFile;
     bool fileExists(QString path);
 
 signals:
@@ -22,12 +24,15 @@ signals:
 
 public slots:
     void onNewConnection();
-    void readyStream();
+    void readyTcp();
+    void readyUdp();
 
 private:
 
-    QTcpServer m_server;
-    std::vector<QTcpSocket*> clients;
+    QTcpServer m_server_tcp;
+    QUdpSocket m_server_udp;
+    std::vector<QTcpSocket*> clients_tcp;
+    std::vector<QUdpSocket*> clients_udp;
 };
 
 #endif // MEDIASERVER_H
