@@ -40,6 +40,7 @@
 #define MAINWINDOW_H
 #define SLIDER_DIVISOR 10
 #include <QMainWindow>
+#include <QMediaMetaData>
 #include <QFileDialog>
 #include <QTime>
 
@@ -64,6 +65,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     virtual ~MainWindow();
     void updateDurationInfo(double currentInfoD);
+    void getFileInputName();
 
 signals:
     void addedMedia();

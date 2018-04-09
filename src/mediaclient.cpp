@@ -1,6 +1,7 @@
 #include "mediaclient.h"
 
 MediaClient::MediaClient(QObject *parent) : QObject(parent)
+  , connected(false)
 {
     timer = new QTimer(this);
 }
@@ -13,6 +14,7 @@ void MediaClient::connectClient()
         qInfo() << m_client_sock.errorString(); });
 
     m_client_sock.connectToHost(ipAddress, 5150);
+    connected = true;
 
     QByteArray ba = fileName.toLatin1();
     const char *temp = ba.data();
@@ -40,18 +42,15 @@ void MediaClient::getReqInfo() {
     outputFile.open(filePath.toStdString(), std::ios_base::binary);
 }
 
+void MediaClient::stream() {
 
-
-
+}
 
 void MediaClient::readyRead()
 {
     outputFile << m_client_sock.readAll().toStdString();
     timer->start(2000);
 }
-
-
-
 
 void MediaClient::closeFile()
 {

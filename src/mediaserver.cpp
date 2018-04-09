@@ -64,4 +64,5 @@ bool MediaServer::fileExists(QString path) {
 }
 
 
+std::ifstream inputFile;
 
