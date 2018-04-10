@@ -21,7 +21,7 @@
 --
 -- DESIGNER: Calvin Lai, Will Murphy, Matthew Shew
 --
--- PROGRAMMER: Will Murphy, Calvin Lai
+-- PROGRAMMER: Will Murphy, Calvin Lai, Matthew Shew
 --
 -- NOTES:
 -- The the main window for the media player. This file contains the gui and all user controls such as seek, volume

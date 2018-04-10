@@ -30,6 +30,24 @@
 
 #include "mainwindow.h"
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: MainWindow
+--
+-- DATE: April 3, 2018
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Calvin Lai
+--
+-- PROGRAMMER: Calvin Lai
+--
+-- INTERFACE: MainWindow (QWidget)
+--
+-- RETURNS: N/A
+--
+-- NOTES:
+-- Constructor for the mainwindow class. Sets up a majority of the signals and slots for the media player.
+----------------------------------------------------------------------------------------------------------------------*/
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_ui(new Ui::MainWindow)
@@ -66,11 +84,47 @@ MainWindow::MainWindow(QWidget *parent)
 
 }
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: ~MainWIndow
+--
+-- DATE: April 3, 2018
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Calvin Lai
+--
+-- PROGRAMMER: Calvin Lai
+--
+-- INTERFACE: ~MainWindow (void)
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Destructor for the class.
+----------------------------------------------------------------------------------------------------------------------*/
 MainWindow::~MainWindow()
 {
     delete m_ui;
 }
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: getFileInputName
+--
+-- DATE: April 3, 2018
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Calvin Lai, Matthew Shew
+--
+-- PROGRAMMER: Calvin Lai, Matthew Shew
+--
+-- INTERFACE: getFileInputName (void)
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Prompts user for file to send to client.
+----------------------------------------------------------------------------------------------------------------------*/
 void MainWindow::getFileInputName()
 {
 
@@ -82,6 +136,24 @@ void MainWindow::getFileInputName()
 
 }
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: exit
+--
+-- DATE: April 3, 2018
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Calvin Lai
+--
+-- PROGRAMMER: Calvin Lai
+--
+-- INTERFACE: exit (bool)
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Quits the application.
+----------------------------------------------------------------------------------------------------------------------*/
 bool MainWindow::exit(bool clicked) {
     if (clicked) {
         QApplication::quit();
@@ -91,6 +163,25 @@ bool MainWindow::exit(bool clicked) {
     return true;
 }
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: previous
+--
+-- DATE: April 3, 2018
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Calvin Lai
+--
+-- PROGRAMMER: Calvin Lai
+--
+-- INTERFACE: previous (void)
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Sets the current media to the previous media in the playlist if less than 3 seconds have been played. Restarts the
+-- current media if more than 3 seconds have played.
+----------------------------------------------------------------------------------------------------------------------*/
 void MainWindow::previous() {
     if (player->control()->position() <= 3000) {
         player->prev();
@@ -99,18 +190,91 @@ void MainWindow::previous() {
     }
 }
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: setVolume
+--
+-- DATE: April 3, 2018
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Calvin Lai
+--
+-- PROGRAMMER: Calvin Lai
+--
+-- INTERFACE: setVolume (int)
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Sets the volume to the selected value.
+----------------------------------------------------------------------------------------------------------------------*/
 void MainWindow::setVolume(int value) {
     player->control()->setVolume(value);
 }
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: seek
+--
+-- DATE: April 3, 2018
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Calvin Lai
+--
+-- PROGRAMMER: Calvin Lai
+--
+-- INTERFACE: seek (int)
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Jumps to the selected position of the currently playing media.
+----------------------------------------------------------------------------------------------------------------------*/
 void MainWindow::seek(int value) {
     player->control()->setPosition(value);
 }
+
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: durationChanged
+--
+-- DATE: April 3, 2018
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Calvin Lai
+--
+-- PROGRAMMER: Calvin Lai
+--
+-- INTERFACE: durationChanged (void)
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Sets the maximum value of the horizontal slider when the current audio file is updated.
+----------------------------------------------------------------------------------------------------------------------*/
 void MainWindow::durationChanged(qint64 duration) {
     this->duration = duration/1000;
     m_ui->horizontalSlider->setMaximum(duration);
 }
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: positionChanged
+--
+-- DATE: April 3, 2018
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Calvin Lai
+--
+-- PROGRAMMER: Calvin Lai
+--
+-- INTERFACE: positionChanged (qint64)
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Updates the horizontal slider widget as the song progresses.
+----------------------------------------------------------------------------------------------------------------------*/
 void MainWindow::positionChanged(qint64 progress) {
     if(!m_ui->horizontalSlider->isSliderDown()) {
         m_ui->horizontalSlider->setValue(progress);
@@ -118,6 +282,24 @@ void MainWindow::positionChanged(qint64 progress) {
     updateDurationInfo(progress/1000);
 }
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: updateDurationInfo
+--
+-- DATE: April 3, 2018
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Calvin Lai
+--
+-- PROGRAMMER: Calvin Lai
+--
+-- INTERFACE: updateDurationInfo (double)
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Updates the current progress of the current media.
+----------------------------------------------------------------------------------------------------------------------*/
 void MainWindow::updateDurationInfo(double currentInfoD)
 {
     qint64 currentInfo = (qint64)currentInfoD;
@@ -138,12 +320,48 @@ void MainWindow::updateDurationInfo(double currentInfoD)
     m_ui->right->setText(rStr);
 }
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: updatePlayList
+--
+-- DATE: April 3, 2018
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Calvin Lai
+--
+-- PROGRAMMER: Calvin Lai
+--
+-- INTERFACE: updatePlayList (void)
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Updates the playlist widget with the song title and album artist of thew newly added media file.
+----------------------------------------------------------------------------------------------------------------------*/
 void MainWindow::updatePlayList() {
     QTreeWidgetItem *playlistItem = new QTreeWidgetItem(m_ui->playList);
     playlistItem->setText(0, player->control()->metaData(QMediaMetaData::Title).toString());
     playlistItem->setText(1, player->control()->metaData(QMediaMetaData::Author).toString());
 }
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: updateClientList
+--
+-- DATE: April 10, 2018
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Calvin Lai
+--
+-- PROGRAMMER: Calvin Lai
+--
+-- INTERFACE: updateClientList (QHostAddress, quint16)
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Updates the clientlist widget with the newly connected client.
+----------------------------------------------------------------------------------------------------------------------*/
 void MainWindow::updateClientList(QHostAddress ip, quint16 port) {
     QTreeWidgetItem *newClient = new QTreeWidgetItem(m_ui->clientList);
 

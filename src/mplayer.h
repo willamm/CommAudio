@@ -55,7 +55,6 @@ public slots:
     void play();
     void next();
     void prev();
-//    void setVolume();
 
 private:
     QMediaPlayer* player;
