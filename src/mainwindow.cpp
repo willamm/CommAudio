@@ -83,6 +83,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_ui->horizontalSlider->setRange(0, player->control()->duration()/ 10000);
     connect(m_server, SIGNAL(updateMainWindow(QHostAddress, quint16)), this, SLOT(updateClientList(QHostAddress, quint16)));
     connect(player->control(), SIGNAL(metaDataChanged()), this, SLOT(updateWindowTitle()));
+    connect(m_client, SIGNAL(streamMode()), this, SLOT(updateWindowTitle()));
 }
 
 /*------------------------------------------------------------------------------------------------------------------
@@ -398,24 +399,26 @@ void MainWindow::updateClientList(QHostAddress ip, quint16 port) {
 -- Updates the window title with the player's current media (if any) and player status.
 ----------------------------------------------------------------------------------------------------------------------*/
 void MainWindow::updateWindowTitle() {
-
-    QString trackInfo = player->control()->metaData(QMediaMetaData::Title).toString();
-    QMediaPlayer::State state = player->control()->state();
-    QString status;
-    switch (state) {
-        case QMediaPlayer::StoppedState:
-            status = "Stopped";
-            break;
-        case QMediaPlayer::PlayingState:
-            status = "Playing";
-            break;
-        case QMediaPlayer::PausedState:
-            status = "Paused";
-            break;
-        default:
-            status = "N/A";
-            break;
+    if (!m_client->getUdpStatus()) {
+        QString trackInfo = player->control()->metaData(QMediaMetaData::Title).toString();
+        QMediaPlayer::State state = player->control()->state();
+        QString status;
+        switch (state) {
+            case QMediaPlayer::StoppedState:
+                status = "Stopped";
+                break;
+            case QMediaPlayer::PlayingState:
+                status = "Playing";
+                break;
+            case QMediaPlayer::PausedState:
+                status = "Paused";
+                break;
+            default:
+                status = "N/A";
+                break;
+        }
+        setWindowTitle(QString("Qtify Audio Player || %1 || %2").arg(trackInfo).arg(status));
+    } else {
+        setWindowTitle(QString("Qtify Audio Player || Streaming from %1").arg(m_client->getIpAddress()));
     }
-    setWindowTitle(QString("Qtify Audio Player || %1 || %2").arg(trackInfo).arg(status));
-
 }

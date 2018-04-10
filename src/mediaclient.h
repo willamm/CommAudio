@@ -10,6 +10,8 @@
 --      void processStream(QNetworkDatagram datagram);
 --      void joinGroup();
 --      void request();
+--      bool getUdpStatus();
+--      bool getTcpStatus();
 --
 --  public slots:
 --      void startStream();
@@ -58,6 +60,12 @@ public:
     std::ofstream outputFile;
     std::ifstream inputFile;
     QString fileName;
+    bool getUdpStatus();
+    bool getTcpStatus();
+    QString getIpAddress();
+
+signals:
+    void streamMode();
 
 public slots:
     void startStream();
