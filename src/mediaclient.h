@@ -37,6 +37,7 @@
 #define MEDIACLIENT_H
 
 #include <fstream>
+#include <QDir>
 #include <QInputDialog>
 #include <QLineEdit>
 #include <QMessageBox>

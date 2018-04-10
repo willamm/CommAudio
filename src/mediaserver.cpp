@@ -59,8 +59,6 @@ MediaServer::MediaServer(QObject *parent, int port) : QObject(parent)
     }
     connect(&m_server_tcp, &QTcpServer::newConnection, this, &MediaServer::onNewConnection);
 
-
-
     m_server_udp.bind(QHostAddress::Any, port + 1);
     connect(&m_server_udp, SIGNAL(readyRead()), this, SLOT(readyUdp()));
 
@@ -138,7 +136,10 @@ std::vector<QTcpSocket*> MediaServer::getClients() {
 ----------------------------------------------------------------------------------------------------------------------*/
 void MediaServer::readyTcp()
 {
-    QString filePath = "C:/Users/Matt/Music/";
+    QDir dir;
+    QString filePath = dir.homePath() + "/Downloads/";
+//    QString filePath = "/Users/clai/Downloads/";
+//  QString filePath = "C:/Users/Matt/Music/";
     int size = (int) clients_tcp.size();
     for(int i = 0; i < size; i++) {
         QString temp = clients_tcp.at(i)->readAll();
@@ -155,7 +156,11 @@ void MediaServer::readyTcp()
             clients_tcp.at(i)->write(byteArr);
 
             file.close();
-            qInfo() << "file sent\n";
+            qInfo() << "File successfully sent to " << clients_tcp.at(i)->peerAddress().toString() << "\n";
+        } else {
+            QMessageBox msgBox;
+            msgBox.setText("File does not exist, please request another file.");
+            msgBox.exec();
         }
     }
 }
@@ -176,7 +181,7 @@ void MediaServer::readyTcp()
 -- RETURNS: bool
 --
 -- NOTES:
--- Function is called when the UDP socket is ready for reading.
+-- Function is called when the UDP socket has datagrams ready for reading.
 ----------------------------------------------------------------------------------------------------------------------*/
 void MediaServer::readyUdp()
 {

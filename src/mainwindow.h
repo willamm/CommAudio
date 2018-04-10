@@ -31,14 +31,14 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 #define SLIDER_DIVISOR 10
+#include <QDir>
+#include <QFileDialog>
 #include <QMainWindow>
 #include <QMediaMetaData>
-#include <QFileDialog>
 #include <QTime>
-
 #include <memory>
-#include "mplayer.h"
 
+#include "mplayer.h"
 #include "mediaserver.h"
 #include "voicechatcontroller.h"
 #include "mediaclient.h"

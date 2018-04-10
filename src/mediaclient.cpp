@@ -274,7 +274,7 @@ void MediaClient::joinGroup() {
 void MediaClient::request() {
     if (!ipAddress.isEmpty()) {
         bool ok;
-        QString file = QInputDialog::getText(Q_NULLPTR, tr("Download from Server"), tr("Song Request:"), QLineEdit::Normal, "", &ok);
+        QString file = QInputDialog::getText(Q_NULLPTR, tr("Download from Server"), tr("Song Request:"), QLineEdit::Normal, "01 Say My Name (Dabin Remix).mp3", &ok);
         if (ok && !file.isEmpty()) {
             fileName = file;
 
@@ -286,9 +286,16 @@ void MediaClient::request() {
             connect(timer, SIGNAL(timeout()), this, SLOT(closeFile()));
             timer->start(2000);
         }
-        QString filePath = "C:/Users/Matt/Music/Client_";
+//        QString filePath = "C:/Users/Matt/Music/Client_";
+//        QString filePath = "/Users/clai/Downloads/Client_";
+        QDir dir;
+        qInfo() << dir.currentPath() << "\n" << dir.homePath() << "\n";
+        QString filePath = dir.homePath() + "/Documents/";
         filePath.append(file);
         outputFile.open(filePath.toStdString(), std::ios_base::binary);
+        qInfo() << "File saved as " << filePath << "\n";
+        readyRead();
+
     } else {
         QMessageBox msgBox;
         msgBox.setText("Please connect to server first.");

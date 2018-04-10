@@ -57,6 +57,8 @@ MainWindow::MainWindow(QWidget *parent)
     , m_client(new MediaClient(this))
     , m_voiceChat(new VoiceChatController(this))
 {
+    QDir dir;
+    QString filePath = dir.homePath() + "/Documents/";
     m_ui->setupUi(this);
 
     connect(this, SIGNAL(addedMedia()), this, SLOT(updatePlayList()));
@@ -67,8 +69,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_ui->actionJoin_Group, &QAction::triggered, m_client, &MediaClient::joinGroup);
     connect(m_ui->actionRequest_2, &QAction::triggered, m_client, &MediaClient::request);
     connect(m_ui->actionExit, SIGNAL(triggered(bool)), this, SLOT(exit(bool)));
-    connect(m_ui->actionAdd_file, &QAction::triggered, this, [this] (){
-       fileName = QFileDialog::getOpenFileName(this, tr("Open file"));
+    connect(m_ui->actionAdd_file, &QAction::triggered, this, [this, filePath] (){
+       fileName = QFileDialog::getOpenFileName(this, tr("Open file"), filePath, tr("Audio Files (*.mp3 *.wav)") );
        player->addToQueue(QUrl::fromLocalFile(fileName));
        emit addedMedia();
     });
