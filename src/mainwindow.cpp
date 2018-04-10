@@ -14,6 +14,7 @@
 --      void positionChanged(qint64 progress);
 --      void setVolume(int value);
 --      void seek(int value);
+--      updateWindowTitle (void)
 --
 -- DATE: April 3, 2018
 --
@@ -51,9 +52,9 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_ui(new Ui::MainWindow)
+    , player(new mPlayer(this))
     , m_server(new MediaServer(this, 5150))
     , m_client(new MediaClient(this))
-    , player(new mPlayer(this))
     , m_voiceChat(new VoiceChatController(this))
 {
     m_ui->setupUi(this);
@@ -81,7 +82,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_ui->volumeControl->setValue(50);
     m_ui->horizontalSlider->setRange(0, player->control()->duration()/ 10000);
     connect(m_server, SIGNAL(updateMainWindow(QHostAddress, quint16)), this, SLOT(updateClientList(QHostAddress, quint16)));
-
+    connect(player->control(), SIGNAL(metaDataChanged()), this, SLOT(updateWindowTitle()));
 }
 
 /*------------------------------------------------------------------------------------------------------------------
@@ -375,5 +376,46 @@ void MainWindow::updateClientList(QHostAddress ip, quint16 port) {
 
     newClient->setText(0, tr(listIP));
     newClient->setText(1, tr(listPort));
+
+}
+
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: updateWindowTitle
+--
+-- DATE: April 10, 2018
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Calvin Lai
+--
+-- PROGRAMMER: Calvin Lai
+--
+-- INTERFACE: updateWindowTitle (void)
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Updates the window title with the player's current media (if any) and player status.
+----------------------------------------------------------------------------------------------------------------------*/
+void MainWindow::updateWindowTitle() {
+
+    QString trackInfo = player->control()->metaData(QMediaMetaData::Title).toString();
+    QMediaPlayer::State state = player->control()->state();
+    QString status;
+    switch (state) {
+        case QMediaPlayer::StoppedState:
+            status = "Stopped";
+            break;
+        case QMediaPlayer::PlayingState:
+            status = "Playing";
+            break;
+        case QMediaPlayer::PausedState:
+            status = "Paused";
+            break;
+        default:
+            status = "N/A";
+            break;
+    }
+    setWindowTitle(QString("Qtify Audio Player || %1 || %2").arg(trackInfo).arg(status));
 
 }

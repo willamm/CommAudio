@@ -14,6 +14,7 @@
 --      void positionChanged(qint64 progress);
 --      void setVolume(int value);
 --      void seek(int value);
+--      updateWindowTitle (void);
 --
 -- DATE: April 3, 2018
 --
@@ -70,6 +71,7 @@ private slots:
     bool exit(bool clicked);
     void updateClientList(QHostAddress ip, quint16 port);
     void updatePlayList();
+    void updateWindowTitle();
 
 private:
     Ui::MainWindow* m_ui;

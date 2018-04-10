@@ -15,7 +15,8 @@
 --
 --  public slots:
 --      void onNewConnection();
---      void readyStream();
+--      void readyTcp();
+--      void readyUdp();
 --
 -- DATE: April 3, 2018
 --
@@ -91,7 +92,7 @@ void MediaServer::onNewConnection()
     QTcpSocket* socket = m_server_tcp.nextPendingConnection();
     clients_tcp.push_back(socket);
     qInfo() << "New client successfully connected.\n";
-    connect(socket, SIGNAL(readyRead()), this, SLOT(readyStream()));
+    connect(socket, SIGNAL(readyRead()), this, SLOT(readyTcp()));
     emit updateMainWindow(socket->peerAddress(), socket->peerPort());
 }
 
@@ -138,9 +139,9 @@ std::vector<QTcpSocket*> MediaServer::getClients() {
 void MediaServer::readyTcp()
 {
     QString filePath = "C:/Users/Matt/Music/";
-    int size = (int) clients.size();
+    int size = (int) clients_tcp.size();
     for(int i = 0; i < size; i++) {
-        QString temp = clients.at(i)->readAll();
+        QString temp = clients_tcp.at(i)->readAll();
         filePath.append(temp);
         qInfo() << filePath;
 
