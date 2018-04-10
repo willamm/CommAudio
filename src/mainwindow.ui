@@ -58,9 +58,17 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="columnCount">
+         <number>2</number>
+        </property>
         <column>
          <property name="text">
-          <string>Connected Servers</string>
+          <string>Client IP Address</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Port</string>
          </property>
         </column>
        </widget>

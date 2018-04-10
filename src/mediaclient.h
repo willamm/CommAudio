@@ -1,3 +1,36 @@
+/*------------------------------------------------------------------------------------------------------------------
+-- HEADER FILE: mediaclient.h
+--
+-- PROGRAM: Qtify Audio Player
+--
+-- FUNCTIONS
+--  public:
+--      explicit MediaClient(QObject *parent = nullptr);
+--      void stream();
+--      void processStream(QNetworkDatagram datagram);
+--      void joinGroup();
+--      void request();
+--
+--  public slots:
+--      void startStream();
+--      void connectToServer();
+--      void getReqInfo();
+--      void readyRead();
+--      void closeFile();
+--      void readPendingDatagrams();
+--
+-- DATE: April 10, 2018
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Calvin Lai, Will Murphy, Matthew Shew
+--
+-- PROGRAMMER: Matthew Shew, Calvin Lai
+--
+-- NOTES:
+-- This class handles all client side connections for the audio player. It is responsible for both UDP and TCP
+-- connections with the server.
+----------------------------------------------------------------------------------------------------------------------*/
 #ifndef MEDIACLIENT_H
 #define MEDIACLIENT_H
 
@@ -28,7 +61,7 @@ public:
     QString fileName;
 
 public slots:
-    void connectClient();
+    void startStream();
     void connectToServer();
 //    void getReqInfo();
     void readyRead();

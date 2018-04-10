@@ -14,15 +14,6 @@
 --      void positionChanged(qint64 progress);
 --      void setVolume(int value);
 --      void seek(int value);
---  private:
---      Ui::MainWindow* m_ui;
---      mPlayer* player;
---      MediaServer* m_server;
---      VoiceChatController* m_voiceChat;
---      QString fileName;
---      quint64 duration;
---      bool playing;
---
 --
 -- DATE: April 3, 2018
 --
@@ -30,7 +21,7 @@
 --
 -- DESIGNER: Calvin Lai, Will Murphy, Matthew Shew
 --
--- PROGRAMMER: Will Murphy, Calvin Lai
+-- PROGRAMMER: Will Murphy, Calvin Lai, Matthew Shew
 --
 -- NOTES:
 -- The the main window for the media player. This file contains the gui and all user controls such as seek, volume
@@ -53,7 +44,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_ui->actionStart_session, &QAction::triggered, m_voiceChat, &VoiceChatController::hostSession);
     connect(m_ui->actionJoin_session, &QAction::triggered, m_voiceChat, &VoiceChatController::joinSession);
     connect(m_ui->actionConnect, &QAction::triggered, m_client, &MediaClient::connectToServer);
-    connect(m_ui->actionListen, &QAction::triggered, m_client, &MediaClient::connectClient);
+    connect(m_ui->actionListen, &QAction::triggered, m_client, &MediaClient::startStream);
     connect(m_ui->actionJoin_Group, &QAction::triggered, m_client, &MediaClient::joinGroup);
     connect(m_ui->actionRequest_2, &QAction::triggered, m_client, &MediaClient::request);
     connect(m_ui->actionExit, SIGNAL(triggered(bool)), this, SLOT(exit(bool)));
@@ -71,7 +62,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_ui->volumeControl, SIGNAL(valueChanged(int)), this, SLOT(setVolume(int)));
     m_ui->volumeControl->setValue(50);
     m_ui->horizontalSlider->setRange(0, player->control()->duration()/ 10000);
-    connect(m_server, SIGNAL(updateMainWindow(QTcpSocket*)), this, SLOT(updateClientList(QTcpSocket*)));
+    connect(m_server, SIGNAL(updateMainWindow(QHostAddress, quint16)), this, SLOT(updateClientList(QHostAddress, quint16)));
 
 }
 
@@ -153,25 +144,18 @@ void MainWindow::updatePlayList() {
     playlistItem->setText(1, player->control()->metaData(QMediaMetaData::Author).toString());
 }
 
-void MainWindow::updateClientList(QTcpSocket* socket) {
+void MainWindow::updateClientList(QHostAddress ip, quint16 port) {
     QTreeWidgetItem *newClient = new QTreeWidgetItem(m_ui->clientList);
-//    auto it = m_server->getClients().begin();
-//    for (; it != m_server->getClients().end(); ++it) {
-//        QTcpSocket* temp = *it;
-////        QString clientID = temp->localAddress();
-////        char *str=(char *)malloc(1000);
-////        QByteArray ba = clientID.toLatin1();
-//        qInfo() << clientID;
-////        strcpy(str,ba.data());
-////        newClient->setText(0, tr(str));
-//    }
-    /*
-    QString clientID = socket->localAddress().scopeId();
-    char *str=(char *)malloc(10);
-    QByteArray ba = clientID.toLatin1();
-    qInfo() << clientID;
-    strcpy(str,ba.data());
-    */
-    newClient->setText(0, tr("NEW CONNECTION"));
+
+    QString clientport = QString::number(port, 10);
+    QString client = ip.toString();
+    QByteArray ipBA = client.toLatin1();
+    QByteArray portBA = clientport.toLatin1();
+
+    const char *listIP = ipBA.data();
+    const char *listPort = portBA.data();
+
+    newClient->setText(0, tr(listIP));
+    newClient->setText(1, tr(listPort));
 
 }

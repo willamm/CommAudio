@@ -14,15 +14,6 @@
 --      void positionChanged(qint64 progress);
 --      void setVolume(int value);
 --      void seek(int value);
---  private:
---      Ui::MainWindow* m_ui;
---      mPlayer* player;
---      MediaServer* m_server;
---      VoiceChatController* m_voiceChat;
---      QString fileName;
---      quint64 duration;
---      bool playing;
---
 --
 -- DATE: April 3, 2018
 --
@@ -77,7 +68,7 @@ private slots:
     void seek(int value);
     void previous();
     bool exit(bool clicked);
-    void updateClientList(QTcpSocket* socket);
+    void updateClientList(QHostAddress ip, quint16 port);
     void updatePlayList();
 
 private:
