@@ -14,6 +14,7 @@
 --      void positionChanged(qint64 progress);
 --      void setVolume(int value);
 --      void seek(int value);
+--      updateWindowTitle (void);
 --
 -- DATE: April 3, 2018
 --
@@ -30,14 +31,14 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 #define SLIDER_DIVISOR 10
+#include <QDir>
+#include <QFileDialog>
 #include <QMainWindow>
 #include <QMediaMetaData>
-#include <QFileDialog>
 #include <QTime>
-
 #include <memory>
-#include "mplayer.h"
 
+#include "mplayer.h"
 #include "mediaserver.h"
 #include "voicechatcontroller.h"
 #include "mediaclient.h"
@@ -70,6 +71,7 @@ private slots:
     bool exit(bool clicked);
     void updateClientList(QHostAddress ip, quint16 port);
     void updatePlayList();
+    void updateWindowTitle();
 
 private:
     Ui::MainWindow* m_ui;

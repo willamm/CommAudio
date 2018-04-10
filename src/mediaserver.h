@@ -7,7 +7,6 @@
 --  public:
 --      explicit MediaServer(QObject *parent = nullptr, int port = 0);
 --      std::vector<QTcpSocket*> getClients();
---      std::ifstream inputFile;
 --      bool fileExists(QString path);
 --
 --  signals:
@@ -15,9 +14,9 @@
 --
 --  public slots:
 --      void onNewConnection();
---      void readyStream();
 --      void readyTcp();
 --      void readyUdp();
+--
 -- DATE: April 10, 2018
 --
 -- REVISIONS: (Date and Description)
@@ -34,14 +33,16 @@
 #define MEDIASERVER_H
 
 #include <fstream>
+#include <QDir>
+#include <QErrorMessage>
 #include <QFileInfo>
 #include <QFile>
-#include <QErrorMessage>
 #include <QInputDialog>
+#include <QMessageBox>
 #include <QObject>
 #include <QTcpServer>
-#include <QUdpSocket>
 #include <QTcpSocket>
+#include <QUdpSocket>
 #include <vector>
 
 class MediaServer : public QObject

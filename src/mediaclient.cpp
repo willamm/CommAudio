@@ -84,6 +84,7 @@ void MediaClient::startStream()
         m_client_usock.bind(serverIP, 7755);
         connect(&m_client_usock, SIGNAL(readyRead()), this, SLOT(readPendingDatagrams()));
         uconnected = true;
+        emit streamMode();
     } else {
         QMessageBox msgBox;
         msgBox.setText("Please connect to server first.");
@@ -245,7 +246,11 @@ void MediaClient::processStream(QNetworkDatagram datagram) {
 -- Called to join a multicast group.
 ----------------------------------------------------------------------------------------------------------------------*/
 void MediaClient::joinGroup() {
-
+    if (ipAddress.isEmpty()) {
+        QMessageBox msgBox;
+        msgBox.setText("Please connect to server first.");
+        msgBox.exec();
+    }
 }
 
 /*------------------------------------------------------------------------------------------------------------------
@@ -267,29 +272,108 @@ void MediaClient::joinGroup() {
 -- Requests a user specified audio file from the server. If file is found, the file is transfered and saved locally.
 ----------------------------------------------------------------------------------------------------------------------*/
 void MediaClient::request() {
-    bool ok;
-    QString file = QInputDialog::getText(Q_NULLPTR, tr("Download from Server"), tr("Song Request:"), QLineEdit::Normal, "", &ok);
-    if (ok && !file.isEmpty()) {
-        fileName = file;
+    if (!ipAddress.isEmpty()) {
+        bool ok;
+        QString file = QInputDialog::getText(Q_NULLPTR, tr("Download from Server"), tr("Song Request:"), QLineEdit::Normal, "01 Say My Name (Dabin Remix).mp3", &ok);
+        if (ok && !file.isEmpty()) {
+            fileName = file;
 
-        QByteArray ba = fileName.toLatin1();
-        const char *temp = ba.data();
-        m_client_sock.write(temp);
+            QByteArray ba = fileName.toLatin1();
+            const char *temp = ba.data();
+            m_client_sock.write(temp);
 
-        connect(&m_client_sock, SIGNAL(readyRead()), this, SLOT(readyRead()));
-        connect(timer, SIGNAL(timeout()), this, SLOT(closeFile()));
-        timer->start(2000);
+            connect(&m_client_sock, SIGNAL(readyRead()), this, SLOT(readyRead()));
+            connect(timer, SIGNAL(timeout()), this, SLOT(closeFile()));
+            timer->start(2000);
+        }
+//        QString filePath = "C:/Users/Matt/Music/Client_";
+//        QString filePath = "/Users/clai/Downloads/Client_";
+        QDir dir;
+        qInfo() << dir.currentPath() << "\n" << dir.homePath() << "\n";
+        QString filePath = dir.homePath() + "/Documents/";
+        filePath.append(file);
+        outputFile.open(filePath.toStdString(), std::ios_base::binary);
+        qInfo() << "File saved as " << filePath << "\n";
+        readyRead();
+
+    } else {
+        QMessageBox msgBox;
+        msgBox.setText("Please connect to server first.");
+        msgBox.exec();
     }
-    QString filePath = "C:/Users/Matt/Music/Client_";
-    filePath.append(file);
-    outputFile.open(filePath.toStdString(), std::ios_base::binary);
-
 }
 
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: getUdpStatus
+--
+-- DATE: April 10, 2018
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Calvin Lai
+--
+-- PROGRAMMER: Calvin Lai
+--
+-- INTERFACE: getUdpStatus (void)
+--
+-- RETURNS: bool
+--
+-- NOTES:
+-- Returns the UDP connection status, true if connected, else false.
+----------------------------------------------------------------------------------------------------------------------*/
+bool MediaClient::getUdpStatus() {
+    return uconnected;
+}
 
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: getTcpStatus
+--
+-- DATE: April 10, 2018
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Calvin Lai
+--
+-- PROGRAMMER: Calvin Lai
+--
+-- INTERFACE: getTcpStatus (void)
+--
+-- RETURNS: bool
+--
+-- NOTES:
+-- Returns the TCP connection status, true if connected, else false.
+----------------------------------------------------------------------------------------------------------------------*/
+bool MediaClient::getTcpStatus() {
+    return connected;
+}
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: getIpAddress
+--
+-- DATE: April 10, 2018
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Calvin Lai
+--
+-- PROGRAMMER: Calvin Lai
+--
+-- INTERFACE: getIpAddress (void)
+--
+-- RETURNS: bool
+--
+-- NOTES:
+-- Returns the ipAddress status, true if connected, else false.
+----------------------------------------------------------------------------------------------------------------------*/
+QString MediaClient::getIpAddress() {
+    if (!ipAddress.isEmpty()) {
+        return ipAddress;
+    } else {
+        return NULL;
+    }
+}
 
 
 

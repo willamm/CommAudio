@@ -10,6 +10,8 @@
 --      void processStream(QNetworkDatagram datagram);
 --      void joinGroup();
 --      void request();
+--      bool getUdpStatus();
+--      bool getTcpStatus();
 --
 --  public slots:
 --      void startStream();
@@ -35,6 +37,7 @@
 #define MEDIACLIENT_H
 
 #include <fstream>
+#include <QDir>
 #include <QInputDialog>
 #include <QLineEdit>
 #include <QMessageBox>
@@ -58,6 +61,12 @@ public:
     std::ofstream outputFile;
     std::ifstream inputFile;
     QString fileName;
+    bool getUdpStatus();
+    bool getTcpStatus();
+    QString getIpAddress();
+
+signals:
+    void streamMode();
 
 public slots:
     void startStream();

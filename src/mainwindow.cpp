@@ -14,6 +14,7 @@
 --      void positionChanged(qint64 progress);
 --      void setVolume(int value);
 --      void seek(int value);
+--      updateWindowTitle (void)
 --
 -- DATE: April 3, 2018
 --
@@ -51,11 +52,13 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_ui(new Ui::MainWindow)
+    , player(new mPlayer(this))
     , m_server(new MediaServer(this, 5150))
     , m_client(new MediaClient(this))
-    , player(new mPlayer(this))
     , m_voiceChat(new VoiceChatController(this))
 {
+    QDir dir;
+    QString filePath = dir.homePath() + "/Documents/";
     m_ui->setupUi(this);
 
     connect(this, SIGNAL(addedMedia()), this, SLOT(updatePlayList()));
@@ -66,8 +69,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_ui->actionJoin_Group, &QAction::triggered, m_client, &MediaClient::joinGroup);
     connect(m_ui->actionRequest_2, &QAction::triggered, m_client, &MediaClient::request);
     connect(m_ui->actionExit, SIGNAL(triggered(bool)), this, SLOT(exit(bool)));
-    connect(m_ui->actionAdd_file, &QAction::triggered, this, [this] (){
-       fileName = QFileDialog::getOpenFileName(this, tr("Open file"));
+    connect(m_ui->actionAdd_file, &QAction::triggered, this, [this, filePath] (){
+       fileName = QFileDialog::getOpenFileName(this, tr("Open file"), filePath, tr("Audio Files (*.mp3 *.wav)") );
        player->addToQueue(QUrl::fromLocalFile(fileName));
        emit addedMedia();
     });
@@ -81,7 +84,8 @@ MainWindow::MainWindow(QWidget *parent)
     m_ui->volumeControl->setValue(50);
     m_ui->horizontalSlider->setRange(0, player->control()->duration()/ 10000);
     connect(m_server, SIGNAL(updateMainWindow(QHostAddress, quint16)), this, SLOT(updateClientList(QHostAddress, quint16)));
-
+    connect(player->control(), SIGNAL(metaDataChanged()), this, SLOT(updateWindowTitle()));
+    connect(m_client, SIGNAL(streamMode()), this, SLOT(updateWindowTitle()));
 }
 
 /*------------------------------------------------------------------------------------------------------------------
@@ -376,4 +380,47 @@ void MainWindow::updateClientList(QHostAddress ip, quint16 port) {
     newClient->setText(0, tr(listIP));
     newClient->setText(1, tr(listPort));
 
+}
+
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: updateWindowTitle
+--
+-- DATE: April 10, 2018
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Calvin Lai
+--
+-- PROGRAMMER: Calvin Lai
+--
+-- INTERFACE: updateWindowTitle (void)
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Updates the window title with the player's current media (if any) and player status.
+----------------------------------------------------------------------------------------------------------------------*/
+void MainWindow::updateWindowTitle() {
+    if (!m_client->getUdpStatus()) {
+        QString trackInfo = player->control()->metaData(QMediaMetaData::Title).toString();
+        QMediaPlayer::State state = player->control()->state();
+        QString status;
+        switch (state) {
+            case QMediaPlayer::StoppedState:
+                status = "Stopped";
+                break;
+            case QMediaPlayer::PlayingState:
+                status = "Playing";
+                break;
+            case QMediaPlayer::PausedState:
+                status = "Paused";
+                break;
+            default:
+                status = "N/A";
+                break;
+        }
+        setWindowTitle(QString("Qtify Audio Player || %1 || %2").arg(trackInfo).arg(status));
+    } else {
+        setWindowTitle(QString("Qtify Audio Player || Streaming from %1").arg(m_client->getIpAddress()));
+    }
 }

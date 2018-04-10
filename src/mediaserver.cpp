@@ -15,7 +15,8 @@
 --
 --  public slots:
 --      void onNewConnection();
---      void readyStream();
+--      void readyTcp();
+--      void readyUdp();
 --
 -- DATE: April 3, 2018
 --
@@ -58,8 +59,6 @@ MediaServer::MediaServer(QObject *parent, int port) : QObject(parent)
     }
     connect(&m_server_tcp, &QTcpServer::newConnection, this, &MediaServer::onNewConnection);
 
-
-
     m_server_udp.bind(QHostAddress::Any, port + 1);
     connect(&m_server_udp, SIGNAL(readyRead()), this, SLOT(readyUdp()));
 
@@ -91,7 +90,7 @@ void MediaServer::onNewConnection()
     QTcpSocket* socket = m_server_tcp.nextPendingConnection();
     clients_tcp.push_back(socket);
     qInfo() << "New client successfully connected.\n";
-    connect(socket, SIGNAL(readyRead()), this, SLOT(readyStream()));
+    connect(socket, SIGNAL(readyRead()), this, SLOT(readyTcp()));
     emit updateMainWindow(socket->peerAddress(), socket->peerPort());
 }
 
@@ -137,10 +136,13 @@ std::vector<QTcpSocket*> MediaServer::getClients() {
 ----------------------------------------------------------------------------------------------------------------------*/
 void MediaServer::readyTcp()
 {
-    QString filePath = "C:/Users/Matt/Music/";
-    int size = (int) clients.size();
+    QDir dir;
+    QString filePath = dir.homePath() + "/Downloads/";
+//    QString filePath = "/Users/clai/Downloads/";
+//  QString filePath = "C:/Users/Matt/Music/";
+    int size = (int) clients_tcp.size();
     for(int i = 0; i < size; i++) {
-        QString temp = clients.at(i)->readAll();
+        QString temp = clients_tcp.at(i)->readAll();
         filePath.append(temp);
         qInfo() << filePath;
 
@@ -154,7 +156,11 @@ void MediaServer::readyTcp()
             clients_tcp.at(i)->write(byteArr);
 
             file.close();
-            qInfo() << "file sent\n";
+            qInfo() << "File successfully sent to " << clients_tcp.at(i)->peerAddress().toString() << "\n";
+        } else {
+            QMessageBox msgBox;
+            msgBox.setText("File does not exist, please request another file.");
+            msgBox.exec();
         }
     }
 }
@@ -175,7 +181,7 @@ void MediaServer::readyTcp()
 -- RETURNS: bool
 --
 -- NOTES:
--- Function is called when the UDP socket is ready for reading.
+-- Function is called when the UDP socket has datagrams ready for reading.
 ----------------------------------------------------------------------------------------------------------------------*/
 void MediaServer::readyUdp()
 {
