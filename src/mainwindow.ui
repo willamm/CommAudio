@@ -58,9 +58,17 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="columnCount">
+         <number>2</number>
+        </property>
         <column>
          <property name="text">
-          <string>Connected Servers</string>
+          <string>Client IP Address</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Port</string>
          </property>
         </column>
        </widget>
@@ -188,7 +196,7 @@
      <x>0</x>
      <y>0</y>
      <width>806</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -203,9 +211,13 @@
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
-     <string>Request</string>
+     <string>Stream</string>
     </property>
     <addaction name="actionConnect"/>
+    <addaction name="actionRequest_2"/>
+    <addaction name="separator"/>
+    <addaction name="actionListen"/>
+    <addaction name="actionJoin_Group"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -267,6 +279,21 @@
    </property>
   </action>
   <action name="actionRequest">
+   <property name="text">
+    <string>Request</string>
+   </property>
+  </action>
+  <action name="actionListen">
+   <property name="text">
+    <string>Listen</string>
+   </property>
+  </action>
+  <action name="actionJoin_Group">
+   <property name="text">
+    <string>Join Group</string>
+   </property>
+  </action>
+  <action name="actionRequest_2">
    <property name="text">
     <string>Request</string>
    </property>
