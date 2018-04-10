@@ -47,7 +47,6 @@
 
 class MediaClient : public QObject
 {
-
     Q_OBJECT
 
 public:

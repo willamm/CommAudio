@@ -16,7 +16,8 @@
 --  public slots:
 --      void onNewConnection();
 --      void readyStream();
---
+--      void readyTcp();
+--      void readyUdp();
 -- DATE: April 10, 2018
 --
 -- REVISIONS: (Date and Description)
@@ -39,6 +40,7 @@
 #include <QInputDialog>
 #include <QObject>
 #include <QTcpServer>
+#include <QUdpSocket>
 #include <QTcpSocket>
 #include <vector>
 
@@ -56,12 +58,15 @@ signals:
 
 public slots:
     void onNewConnection();
-    void readyStream();
+    void readyTcp();
+    void readyUdp();
 
 private:
 
-    QTcpServer m_server;
-    std::vector<QTcpSocket*> clients;
+    QTcpServer m_server_tcp;
+    QUdpSocket m_server_udp;
+    std::vector<QTcpSocket*> clients_tcp;
+    std::vector<QUdpSocket*> clients_udp;
 };
 
 #endif // MEDIASERVER_H

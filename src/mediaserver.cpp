@@ -51,12 +51,18 @@
 ----------------------------------------------------------------------------------------------------------------------*/
 MediaServer::MediaServer(QObject *parent, int port) : QObject(parent)
 {
-    if (!m_server.listen(QHostAddress::Any, port))
+    if (!m_server_tcp.listen(QHostAddress::Any, port))
     {
         QErrorMessage errMsg;
         errMsg.showMessage(QString("Error while trying to listen on port %1").arg(port));
     }
-    connect(&m_server, &QTcpServer::newConnection, this, &MediaServer::onNewConnection);
+    connect(&m_server_tcp, &QTcpServer::newConnection, this, &MediaServer::onNewConnection);
+
+
+
+    m_server_udp.bind(QHostAddress::Any, port + 1);
+    connect(&m_server_udp, SIGNAL(readyRead()), this, SLOT(readyUdp()));
+
     qInfo() << "Server ready.\n";
 
 }
@@ -82,12 +88,11 @@ MediaServer::MediaServer(QObject *parent, int port) : QObject(parent)
 void MediaServer::onNewConnection()
 {
 
-    QTcpSocket* socket = m_server.nextPendingConnection();
-    clients.push_back(socket);
+    QTcpSocket* socket = m_server_tcp.nextPendingConnection();
+    clients_tcp.push_back(socket);
     qInfo() << "New client successfully connected.\n";
     connect(socket, SIGNAL(readyRead()), this, SLOT(readyStream()));
     emit updateMainWindow(socket->peerAddress(), socket->peerPort());
-
 }
 
 /*------------------------------------------------------------------------------------------------------------------
@@ -109,11 +114,11 @@ void MediaServer::onNewConnection()
 -- Returns the list of currently connected clients.
 ----------------------------------------------------------------------------------------------------------------------*/
 std::vector<QTcpSocket*> MediaServer::getClients() {
-    return clients;
+    return clients_tcp;
 }
 
 /*------------------------------------------------------------------------------------------------------------------
--- FUNCTION: readyStream
+-- FUNCTION: readyTcp
 --
 -- DATE: April 3, 2018
 --
@@ -123,14 +128,14 @@ std::vector<QTcpSocket*> MediaServer::getClients() {
 --
 -- PROGRAMMER: Calvin Lai, Matthew Shew
 --
--- INTERFACE: void readyStream (void)
+-- INTERFACE: void readyTcp (void)
 --
 -- RETURNS: void.
 --
 -- NOTES:
--- This function is called when the socket is ready for streaming.
+-- This function is called when the TCP socket is ready for streaming.
 ----------------------------------------------------------------------------------------------------------------------*/
-void MediaServer::readyStream()
+void MediaServer::readyTcp()
 {
     QString filePath = "C:/Users/Matt/Music/";
     int size = (int) clients.size();
@@ -146,12 +151,48 @@ void MediaServer::readyStream()
 
             QByteArray byteArr;
             byteArr = file.readAll();
-            clients.at(i)->write(byteArr);
+            clients_tcp.at(i)->write(byteArr);
 
             file.close();
             qInfo() << "file sent\n";
         }
     }
+}
+
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: readyUdp()
+--
+-- DATE: April 10, 2018
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Matthew Shew
+--
+-- PROGRAMMER: Matthew Shew
+--
+-- INTERFACE: bool readyUdp (void)
+--
+-- RETURNS: bool
+--
+-- NOTES:
+-- Function is called when the UDP socket is ready for reading.
+----------------------------------------------------------------------------------------------------------------------*/
+void MediaServer::readyUdp()
+{
+    QByteArray buffer;
+    buffer.resize(m_server_udp.pendingDatagramSize());
+
+    QHostAddress sender;
+    quint16 senderPort;
+    int currSize;
+    currSize = m_server_udp.readDatagram(buffer.data(), buffer.size(), &sender, &senderPort);
+    //outputFile << buffer.toStdString();
+    //qInfo() << buffer.toStdString();
+
+//    if (currSize == 0)
+//    {
+//        stop();
+//    }
 }
 
 /*------------------------------------------------------------------------------------------------------------------

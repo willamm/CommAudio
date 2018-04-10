@@ -33,9 +33,9 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_ui(new Ui::MainWindow)
-    , player(new mPlayer)
     , m_server(new MediaServer(this, 5150))
     , m_client(new MediaClient(this))
+    , player(new mPlayer(this))
     , m_voiceChat(new VoiceChatController(this))
 {
     m_ui->setupUi(this);

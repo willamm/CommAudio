@@ -38,11 +38,11 @@
 
 
 // CONSTRUCTOR/DESTRUCTOR
-mPlayer::mPlayer()
+mPlayer::mPlayer(QObject* parent)
 {
-    player = new QMediaPlayer();
+    player = new QMediaPlayer(this);
     player->setVolume(50);
-    playlist = new QMediaPlaylist();
+    playlist = new QMediaPlaylist(this);
     player->setPlaylist(playlist);
     playing = false;
 }
