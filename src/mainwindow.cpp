@@ -90,6 +90,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(player->control(), SIGNAL(metaDataChanged()), this, SLOT(updateWindowTitle()));
     connect(m_client, SIGNAL(streamMode()), this, SLOT(updateWindowTitle()));
     connect(m_ui->actionExit, SIGNAL(triggered(bool)), this, SLOT(exit(bool)));
+    connect(m_client, SIGNAL(mediaLoaded(QString)), this, SLOT(playRequest(QString)));
 }
 
 /*------------------------------------------------------------------------------------------------------------------
@@ -427,4 +428,29 @@ void MainWindow::updateWindowTitle() {
     } else {
         setWindowTitle(QString("Qtify Audio Player || Streaming from %1").arg(m_client->getIpAddress()));
     }
+}
+
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: playRequest
+--
+-- DATE: April 10, 2018
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Calvin Lai
+--
+-- PROGRAMMER: Calvin Lai
+--
+-- INTERFACE: playRequest (QString)
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Plays the requested song from server.
+----------------------------------------------------------------------------------------------------------------------*/
+void MainWindow::playRequest(QString filePath) {
+    player->getPlaylist()->clear();
+    player->addToQueue(QUrl::fromLocalFile(filePath));
+    player->next();
+    emit addedMedia();
 }

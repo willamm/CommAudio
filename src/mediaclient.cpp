@@ -301,6 +301,10 @@ void MediaClient::request() {
         filePath.append(file);
         outputFile.open(filePath.toStdString(), std::ios_base::binary);
         qInfo() << "File saved as " << filePath << "\n";
+
+        //readyRead();
+        emit mediaLoaded(filePath);
+
     } else {
         QMessageBox msgBox;
         msgBox.setText("Please connect to server first.");

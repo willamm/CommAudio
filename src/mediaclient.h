@@ -67,11 +67,11 @@ public:
 
 signals:
     void streamMode();
+    void mediaLoaded(QString);
 
 public slots:
     void startStream();
     void connectToServer();
-//    void getReqInfo();
     void readyRead();
     void closeFile();
     void readPendingDatagrams();

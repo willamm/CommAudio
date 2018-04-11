@@ -72,6 +72,7 @@ private slots:
     void updateClientList(QHostAddress ip, quint16 port);
     void updatePlayList();
     void updateWindowTitle();
+    void playRequest(QString filePath);
 
 private:
     Ui::MainWindow* m_ui;
