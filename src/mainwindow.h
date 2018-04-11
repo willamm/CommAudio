@@ -15,6 +15,7 @@
 --      void setVolume(int value);
 --      void seek(int value);
 --      updateWindowTitle (void);
+--      playRequest(QString filePath);
 --
 -- DATE: April 3, 2018
 --
@@ -35,6 +36,7 @@
 #include <QFileDialog>
 #include <QMainWindow>
 #include <QMediaMetaData>
+#include <QEventLoop>
 #include <QTime>
 #include <memory>
 
@@ -73,6 +75,7 @@ private slots:
     void updatePlayList();
     void updateWindowTitle();
     void playRequest(QString filePath);
+    void playStream(QByteArray);
 
 private:
     Ui::MainWindow* m_ui;

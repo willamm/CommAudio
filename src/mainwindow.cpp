@@ -15,6 +15,7 @@
 --      void setVolume(int value);
 --      void seek(int value);
 --      updateWindowTitle (void)
+--      playRequest(QString filePath);
 --
 -- DATE: April 3, 2018
 --
@@ -31,6 +32,7 @@
 
 #include "mainwindow.h"
 
+// CONSTRUCTOR/DESTRUCTOR
 /*------------------------------------------------------------------------------------------------------------------
 -- FUNCTION: MainWindow
 --
@@ -42,7 +44,8 @@
 --
 -- PROGRAMMER: Calvin Lai, Matthew Shew, William Murphy
 --
--- INTERFACE: MainWindow (QWidget)
+-- INTERFACE: MainWindow (QWidget* parent)
+--                        QWidget* parent: the parent widget
 --
 -- RETURNS: N/A
 --
@@ -91,6 +94,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_client, SIGNAL(streamMode()), this, SLOT(updateWindowTitle()));
     connect(m_ui->actionExit, SIGNAL(triggered(bool)), this, SLOT(exit(bool)));
     connect(m_client, SIGNAL(mediaLoaded(QString)), this, SLOT(playRequest(QString)));
+    connect(m_client, SIGNAL(playStream(QByteArray)), this, SLOT(playStream(QByteArray)));
+    connect(m_ui->actionBroadcast, &QAction::triggered, m_server, &MediaServer::broadcast);
 }
 
 /*------------------------------------------------------------------------------------------------------------------
@@ -116,6 +121,7 @@ MainWindow::~MainWindow()
     delete m_ui;
 }
 
+// PUBLIC SLOTS
 /*------------------------------------------------------------------------------------------------------------------
 -- FUNCTION: getFileInputName
 --
@@ -156,7 +162,8 @@ void MainWindow::getFileInputName()
 --
 -- PROGRAMMER: Calvin Lai
 --
--- INTERFACE: exit (bool)
+-- INTERFACE: exit (bool clicked)
+--                  bool clicked: status of the click action
 --
 -- RETURNS: void
 --
@@ -210,7 +217,8 @@ void MainWindow::previous() {
 --
 -- PROGRAMMER: Calvin Lai
 --
--- INTERFACE: setVolume (int)
+-- INTERFACE: setVolume (int value)
+--                       int value: the value to set the volume to
 --
 -- RETURNS: void
 --
@@ -232,7 +240,8 @@ void MainWindow::setVolume(int value) {
 --
 -- PROGRAMMER: Calvin Lai
 --
--- INTERFACE: seek (int)
+-- INTERFACE: seek (int value)
+--                  int value: the position to seek to
 --
 -- RETURNS: void
 --
@@ -277,7 +286,8 @@ void MainWindow::durationChanged(qint64 duration) {
 --
 -- PROGRAMMER: Calvin Lai
 --
--- INTERFACE: positionChanged (qint64)
+-- INTERFACE: positionChanged (qint64 progress)
+--                             quint progress: the value to set the slider position to
 --
 -- RETURNS: void
 --
@@ -302,7 +312,8 @@ void MainWindow::positionChanged(qint64 progress) {
 --
 -- PROGRAMMER: Calvin Lai
 --
--- INTERFACE: updateDurationInfo (double)
+-- INTERFACE: updateDurationInfo (double currentInfoD)
+--                                double currentInfoD: the current elapsed time
 --
 -- RETURNS: void
 --
@@ -364,7 +375,9 @@ void MainWindow::updatePlayList() {
 --
 -- PROGRAMMER: Calvin Lai
 --
--- INTERFACE: updateClientList (QHostAddress, quint16)
+-- INTERFACE: updateClientList (QHostAddress ip, quint16 port)
+--                              QHostAddress ip: the ip address of the client
+--                              quint16 port: the port of the client
 --
 -- RETURNS: void
 --
@@ -441,7 +454,8 @@ void MainWindow::updateWindowTitle() {
 --
 -- PROGRAMMER: Calvin Lai
 --
--- INTERFACE: playRequest (QString)
+-- INTERFACE: playRequest (QString filePath)
+--                         QString filePath: the filepath of the requested song
 --
 -- RETURNS: void
 --
@@ -453,4 +467,41 @@ void MainWindow::playRequest(QString filePath) {
     player->addToQueue(QUrl::fromLocalFile(filePath));
     player->next();
     emit addedMedia();
+}
+
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: playStream
+--
+-- DATE: April 11, 2018
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Calvin Lai
+--
+-- PROGRAMMER: Calvin Lai
+--
+-- INTERFACE: playStream (QByteArray audioPacket)
+--                        QByteArray audioPacket: the packet received from stream
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Plays the streamed packet from the server.
+----------------------------------------------------------------------------------------------------------------------*/
+void MainWindow::playStream(QByteArray audioPacket) {
+//    QEventLoop loop;
+    QAudioFormat format;
+    QAudioOutput* audio;
+
+    format.setSampleRate(44100);
+    format.setChannelCount(2);
+    format.setSampleSize(16);
+    format.setCodec("audio/pcm");
+    format.setByteOrder(QAudioFormat::LittleEndian);
+    format.setSampleType(QAudioFormat::SignedInt);
+    audio = new QAudioOutput(format, this);
+    QBuffer buffer(&audioPacket);
+    buffer.open(QBuffer::ReadWrite);
+    audio->start(&buffer);
+
 }

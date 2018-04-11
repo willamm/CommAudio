@@ -17,6 +17,7 @@
 --      void onNewConnection();
 --      void readyTcp();
 --      void readyUdp();
+--      void broadcast();
 --
 -- DATE: April 3, 2018
 --
@@ -32,6 +33,7 @@
 ----------------------------------------------------------------------------------------------------------------------*/
 #include "mediaserver.h"
 
+// CONSTRUCTOR/DESTRUCTOR
 /*------------------------------------------------------------------------------------------------------------------
 -- FUNCTION: MediaServer
 --
@@ -43,7 +45,9 @@
 --
 -- PROGRAMMER: Calvin Lai, Matthew Shew, William Murphy
 --
--- INTERFACE: MediaServer (QObject, int)
+-- INTERFACE: MediaServer (QObject* parent, int port)
+--                         QObject* parent: the parent object
+--                         int port: the port number
 --
 -- RETURNS: N/A
 --
@@ -59,27 +63,11 @@ MediaServer::MediaServer(QObject *parent, int port) : QObject(parent)
         errMsg.showMessage(QString("Error while trying to listen on port %1").arg(portNum));
     }
     connect(&m_server_tcp, &QTcpServer::newConnection, this, &MediaServer::onNewConnection);
-    //m_server_udp->setSocketOption(QAbstractSocket::MulticastTtlOption, 1);
-    //m_server_udp.bind(QHostAddress::Any, port + 1);
-    //connect(&m_server_udp, SIGNAL(readyRead()), this, SLOT(readyUdp()));
-
-
-
-
-    QThread* thread = new QThread;
-    ServerStream* worker = new ServerStream();
-    worker->moveToThread(thread);
-    //connect(worker, SIGNAL(error(QString)), this, SLOT(errorString(QString)));
-    connect(thread, SIGNAL(started()), worker, SLOT(process()));
-    connect(worker, SIGNAL(finished()), thread, SLOT(quit()));
-    connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
-    connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
-    thread->start();
-
     qInfo() << "Server ready.\n";
 
 }
 
+// PUBLIC SLOTS
 /*------------------------------------------------------------------------------------------------------------------
 -- FUNCTION: onNewConnection
 --
@@ -100,34 +88,11 @@ MediaServer::MediaServer(QObject *parent, int port) : QObject(parent)
 ----------------------------------------------------------------------------------------------------------------------*/
 void MediaServer::onNewConnection()
 {
-
     QTcpSocket* socket = m_server_tcp.nextPendingConnection();
     clients_tcp.push_back(socket);
     qInfo() << "New client successfully connected.\n";
     connect(socket, SIGNAL(readyRead()), this, SLOT(readyTcp()));
     emit updateMainWindow(socket->peerAddress(), socket->peerPort());
-}
-
-/*------------------------------------------------------------------------------------------------------------------
--- FUNCTION: getClients
---
--- DATE: April 3, 2018
---
--- REVISIONS: (Date and Description)
---
--- DESIGNER: Calvin Lai
---
--- PROGRAMMER: Calvin Lai
---
--- INTERFACE: std::vector<QTcpSocket*> getClients (void)
---
--- RETURNS: std::vector<QTcpSocket*>
---
--- NOTES:
--- Returns the list of currently connected clients.
-----------------------------------------------------------------------------------------------------------------------*/
-std::vector<QTcpSocket*> MediaServer::getClients() {
-    return clients_tcp;
 }
 
 /*------------------------------------------------------------------------------------------------------------------
@@ -152,8 +117,6 @@ void MediaServer::readyTcp()
 {
     QDir dir;
     QString filePath = dir.homePath() + "/Downloads/";
-//    QString filePath = "/Users/clai/Downloads/";
-//  QString filePath = "C:/Users/Matt/Music/";
     int size = (int) clients_tcp.size();
     for(int i = 0; i < size; i++) {
         QString temp = clients_tcp.at(i)->readAll();
@@ -180,9 +143,9 @@ void MediaServer::readyTcp()
 }
 
 /*------------------------------------------------------------------------------------------------------------------
--- FUNCTION: readyUdp()
+-- FUNCTION: broadcast
 --
--- DATE: April 10, 2018
+-- DATE: April 11, 2018
 --
 -- REVISIONS: (Date and Description)
 --
@@ -190,35 +153,25 @@ void MediaServer::readyTcp()
 --
 -- PROGRAMMER: Matthew Shew
 --
--- INTERFACE: bool readyUdp (void)
+-- INTERFACE: void broadcast (void)
 --
--- RETURNS: bool
+-- RETURNS: void
 --
 -- NOTES:
--- Function is called when the UDP socket has datagrams ready for reading.
+-- Starts a thread to broadcast to all connected clients.
 ----------------------------------------------------------------------------------------------------------------------*/
-void MediaServer::readyUdp()
-{
-//    QByteArray buffer;
-//    buffer.resize(m_server_udp.pendingDatagramSize());
-
-//    QHostAddress sender;
-//    quint16 senderPort;
-//    int currSize;
-//    currSize = m_server_udp.readDatagram(buffer.data(), buffer.size(), &sender, &senderPort);
-
-
-
-
-    //outputFile << buffer.toStdString();
-    //qInfo() << buffer.toStdString();
-
-//    if (currSize == 0)
-//    {
-//        stop();
-//    }
+void MediaServer::broadcast() {
+    QThread* thread = new QThread;
+    ServerStream* worker = new ServerStream();
+    worker->moveToThread(thread);
+    connect(thread, SIGNAL(started()), worker, SLOT(process()));
+    connect(worker, SIGNAL(finished()), thread, SLOT(quit()));
+    connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
+    connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+    thread->start();
 }
 
+// PUBLIC FUNCTIONS
 /*------------------------------------------------------------------------------------------------------------------
 -- FUNCTION: fileExists
 --
@@ -230,7 +183,8 @@ void MediaServer::readyUdp()
 --
 -- PROGRAMMER: Matthew Shew
 --
--- INTERFACE: bool fileExists (QString)
+-- INTERFACE: bool fileExists (QString path)
+--                             QString path: the file path of the file to check
 --
 -- RETURNS: bool
 --
@@ -240,4 +194,27 @@ void MediaServer::readyUdp()
 bool MediaServer::fileExists(QString path) {
     QFileInfo check_file(path);
     return check_file.exists() && check_file.isFile();
+}
+
+// GETTERS/SETTERS
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: getClients
+--
+-- DATE: April 3, 2018
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Calvin Lai
+--
+-- PROGRAMMER: Calvin Lai
+--
+-- INTERFACE: std::vector<QTcpSocket*> getClients (void)
+--
+-- RETURNS: std::vector<QTcpSocket*>
+--
+-- NOTES:
+-- Returns the list of currently connected clients.
+----------------------------------------------------------------------------------------------------------------------*/
+std::vector<QTcpSocket*> MediaServer::getClients() {
+    return clients_tcp;
 }
