@@ -16,6 +16,7 @@
 --      void onNewConnection();
 --      void readyTcp();
 --      void readyUdp();
+--      void broadcast();
 --
 -- DATE: April 10, 2018
 --
@@ -63,6 +64,7 @@ public slots:
     void onNewConnection();
     void readyTcp();
     void readyUdp();
+    void broadcast();
 
 private:
     int portNum;

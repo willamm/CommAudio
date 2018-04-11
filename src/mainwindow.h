@@ -15,6 +15,7 @@
 --      void setVolume(int value);
 --      void seek(int value);
 --      updateWindowTitle (void);
+--      playRequest(QString filePath);
 --
 -- DATE: April 3, 2018
 --

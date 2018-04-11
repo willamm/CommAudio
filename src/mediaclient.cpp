@@ -34,6 +34,7 @@
 
 #include "mediaclient.h"
 
+// CONSTRUCTOR/DESTRUCTOR
 /*------------------------------------------------------------------------------------------------------------------
 -- FUNCTION: MediaClient
 --
@@ -45,7 +46,8 @@
 --
 -- PROGRAMMER: Calvin Lai, Matthew Shew
 --
--- INTERFACE: MediaClient (QObject)
+-- INTERFACE: MediaClient (QObject* parent)
+--                         QObject* parent: the parent object
 --
 -- RETURNS: N/A
 --
@@ -59,7 +61,7 @@ MediaClient::MediaClient(QObject *parent) : QObject(parent)
 
 }
 
-
+// PUBLIC SLOTS
 /*------------------------------------------------------------------------------------------------------------------
 -- FUNCTION: connectToServer
 --
@@ -295,8 +297,7 @@ void MediaClient::request() {
             connect(timer, SIGNAL(timeout()), this, SLOT(closeFile()));
             timer->start(2000);
         }
-//        QString filePath = "C:/Users/Matt/Music/Client_";
-//        QString filePath = "/Users/clai/Downloads/Client_";
+
         QDir dir;
         qInfo() << dir.currentPath() << "\n" << dir.homePath() << "\n";
         QString filePath = dir.homePath() + "/Documents/";
@@ -304,7 +305,6 @@ void MediaClient::request() {
         outputFile.open(filePath.toStdString(), std::ios_base::binary);
         qInfo() << "File saved as " << filePath << "\n";
 
-        //readyRead();
         emit mediaLoaded(filePath);
 
     } else {

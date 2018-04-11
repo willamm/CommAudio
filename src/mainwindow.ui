@@ -218,6 +218,8 @@
     <addaction name="separator"/>
     <addaction name="actionListen"/>
     <addaction name="actionJoin_Group"/>
+    <addaction name="separator"/>
+    <addaction name="actionBroadcast"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -296,6 +298,11 @@
   <action name="actionRequest_2">
    <property name="text">
     <string>Request</string>
+   </property>
+  </action>
+  <action name="actionBroadcast">
+   <property name="text">
+    <string>Broadcast</string>
    </property>
   </action>
  </widget>
