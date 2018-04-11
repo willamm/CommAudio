@@ -2,6 +2,10 @@
 #define SERVERSTREAM_H
 
 #include <QUdpSocket>
+#include <QAudioInput>
+#include <QAudioFormat>
+#include <QFile>
+#include <QDir>
 
 class ServerStream : public QObject
 {

@@ -232,6 +232,8 @@ void MediaClient::readPendingDatagrams()
 ----------------------------------------------------------------------------------------------------------------------*/
 void MediaClient::processStream(QNetworkDatagram datagram) {
     qInfo() << datagram.data().data();
+    QByteArray audioPacket = datagram.data();
+    emit playStream(audioPacket);
 }
 
 /*------------------------------------------------------------------------------------------------------------------

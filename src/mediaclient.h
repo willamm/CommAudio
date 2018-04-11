@@ -37,7 +37,10 @@
 #define MEDIACLIENT_H
 
 #include <fstream>
+#include <QAudioFormat>
+#include <QAudioOutput>
 #include <QDir>
+#include <QFile>
 #include <QInputDialog>
 #include <QLineEdit>
 #include <QMessageBox>
@@ -68,6 +71,7 @@ public:
 signals:
     void streamMode();
     void mediaLoaded(QString);
+    void playStream(QByteArray);
 
 public slots:
     void startStream();
@@ -83,6 +87,8 @@ private:
     QString ipAddress;
     bool connected;
     bool uconnected;
+//    QAudioOutput* audio;
+//    QFile sourceFile;
 
 };
 

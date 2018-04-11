@@ -91,6 +91,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_client, SIGNAL(streamMode()), this, SLOT(updateWindowTitle()));
     connect(m_ui->actionExit, SIGNAL(triggered(bool)), this, SLOT(exit(bool)));
     connect(m_client, SIGNAL(mediaLoaded(QString)), this, SLOT(playRequest(QString)));
+    connect(m_client, SIGNAL(playStream(QByteArray)), this, SLOT(playStream(QByteArray)));
 }
 
 /*------------------------------------------------------------------------------------------------------------------
@@ -453,4 +454,28 @@ void MainWindow::playRequest(QString filePath) {
     player->addToQueue(QUrl::fromLocalFile(filePath));
     player->next();
     emit addedMedia();
+}
+
+void MainWindow::playStream(QByteArray audioPacket) {
+//    QEventLoop loop;
+    QAudioFormat format;
+    QAudioOutput* audio;
+
+    format.setSampleRate(44100);
+    format.setChannelCount(2);
+    format.setSampleSize(16);
+    format.setCodec("audio/pcm");
+    format.setByteOrder(QAudioFormat::LittleEndian);
+    format.setSampleType(QAudioFormat::SignedInt);
+    audio = new QAudioOutput(format, this);
+    QBuffer buffer(&audioPacket);
+    buffer.open(QBuffer::ReadWrite);
+    audio->start(&buffer);
+//    loop.exec();
+    QEventLoop loop;
+    QObject::connect(audio, SIGNAL(stateChanged(QAudio::State)), &loop, SLOT(quit()));
+    do {
+        loop.exec();
+    } while(audio->state() == QAudio::ActiveState);
+
 }
