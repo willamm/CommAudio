@@ -16,7 +16,6 @@
 --  public slots:
 --      void onNewConnection();
 --      void readyTcp();
---      void readyUdp();
 --      void broadcast();
 --
 -- DATE: April 3, 2018

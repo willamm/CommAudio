@@ -15,7 +15,6 @@
 --  public slots:
 --      void onNewConnection();
 --      void readyTcp();
---      void readyUdp();
 --      void broadcast();
 --
 -- DATE: April 10, 2018
@@ -63,7 +62,6 @@ signals:
 public slots:
     void onNewConnection();
     void readyTcp();
-    void readyUdp();
     void broadcast();
 
 private:
