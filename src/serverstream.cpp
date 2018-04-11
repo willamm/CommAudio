@@ -100,9 +100,10 @@ void ServerStream::process() {
     int arrsize;
     int pos = 0;
     int sizeInArray = 8192;
+    QDir dir;
 
-    QString filePath = QFileDialog::getOpenFileName(this, tr("Select a file to Broadcast"), filePath, tr("Audio Files (*.mp3 *.wav)") );
-
+//    QString filePath = QFileDialog::getOpenFileName(, tr("Select a file to Broadcast"), filePath, tr("Audio Files (*.mp3 *.wav)") );
+    QString filePath = dir.homePath() + "/Downloads/Tritonal Out My Mind.wav";
     QByteArray data;
 
     QFile file(filePath);
@@ -122,13 +123,13 @@ void ServerStream::process() {
     m_server_udp->bind(QHostAddress(QHostAddress::AnyIPv4), 0);
     m_server_udp->setSocketOption(QAbstractSocket::MulticastTtlOption, 1);
     qInfo() << "Multicasting\n";
-//    while (1) {
+    while (1) {
         for (int i = 0; i < arrays.size(); i++) {
 //            m_server_udp->writeDatagram(data.data(), data.size(), groupAddress, 45454);
                         m_server_udp->writeDatagram(arrays.at(i).data(), arrays.at(i).size(), groupAddress, 45454);
 
         }
-//    }
+    }
 //    emit finished();
 }
 
