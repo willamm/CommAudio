@@ -69,7 +69,7 @@ MediaServer::MediaServer(QObject *parent, int port) : QObject(parent)
     QThread* thread = new QThread;
     ServerStream* worker = new ServerStream();
     worker->moveToThread(thread);
-    connect(worker, SIGNAL(error(QString)), this, SLOT(errorString(QString)));
+    //connect(worker, SIGNAL(error(QString)), this, SLOT(errorString(QString)));
     connect(thread, SIGNAL(started()), worker, SLOT(process()));
     connect(worker, SIGNAL(finished()), thread, SLOT(quit()));
     connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));

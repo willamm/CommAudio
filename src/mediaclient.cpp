@@ -231,7 +231,7 @@ void MediaClient::readPendingDatagrams()
 -- Processes incoming audio datagrams.
 ----------------------------------------------------------------------------------------------------------------------*/
 void MediaClient::processStream(QNetworkDatagram datagram) {
-    qInfo() << "recv";//datagram.data().toStdString();
+    qInfo() << datagram.data().data();
 }
 
 /*------------------------------------------------------------------------------------------------------------------

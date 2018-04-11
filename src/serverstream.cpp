@@ -8,7 +8,6 @@ ServerStream::ServerStream(QObject *parent, int port) : QObject(parent)
 
 ServerStream::~ServerStream()
 {
-
 }
 
 
