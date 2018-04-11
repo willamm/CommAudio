@@ -224,6 +224,7 @@ void MediaClient::readPendingDatagrams()
 -- Processes incoming audio datagrams.
 ----------------------------------------------------------------------------------------------------------------------*/
 void MediaClient::processStream(QNetworkDatagram datagram) {
+    QByteArray data = datagram.data();
 
 }
 
@@ -295,6 +296,7 @@ void MediaClient::request() {
         outputFile.open(filePath.toStdString(), std::ios_base::binary);
         qInfo() << "File saved as " << filePath << "\n";
         readyRead();
+        emit mediaLoaded(filePath);
 
     } else {
         QMessageBox msgBox;
