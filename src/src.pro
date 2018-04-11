@@ -6,12 +6,14 @@ SOURCES += main.cpp mainwindow.cpp \
     voicechatcontroller.cpp \
     utilities.cpp \
     mplayer.cpp \
-    mediaclient.cpp
+    mediaclient.cpp \
+    serverstream.cpp
 HEADERS += mainwindow.h \
     mediaserver.h \
     voicechatcontroller.h \
     utilities.h \
     mplayer.h \
-    mediaclient.h
+    mediaclient.h \
+    serverstream.h
 FORMS += mainwindow.ui \
     voicechatcontroller.ui

@@ -38,9 +38,9 @@
 --
 -- REVISIONS: (Date and Description)
 --
--- DESIGNER: Calvin Lai
+-- DESIGNER: Calvin Lai, Matthew Shew, William Murphy
 --
--- PROGRAMMER: Calvin Lai
+-- PROGRAMMER: Calvin Lai, Matthew Shew, William Murphy
 --
 -- INTERFACE: MainWindow (QWidget)
 --
@@ -62,13 +62,15 @@ MainWindow::MainWindow(QWidget *parent)
     m_ui->setupUi(this);
 
     connect(this, SIGNAL(addedMedia()), this, SLOT(updatePlayList()));
+    //chat options
     connect(m_ui->actionStart_session, &QAction::triggered, m_voiceChat, &VoiceChatController::hostSession);
     connect(m_ui->actionJoin_session, &QAction::triggered, m_voiceChat, &VoiceChatController::joinSession);
+    //client options
     connect(m_ui->actionConnect, &QAction::triggered, m_client, &MediaClient::connectToServer);
     connect(m_ui->actionListen, &QAction::triggered, m_client, &MediaClient::startStream);
     connect(m_ui->actionJoin_Group, &QAction::triggered, m_client, &MediaClient::joinGroup);
     connect(m_ui->actionRequest_2, &QAction::triggered, m_client, &MediaClient::request);
-    connect(m_ui->actionExit, SIGNAL(triggered(bool)), this, SLOT(exit(bool)));
+    //media options
     connect(m_ui->actionAdd_file, &QAction::triggered, this, [this, filePath] (){
        fileName = QFileDialog::getOpenFileName(this, tr("Open file"), filePath, tr("Audio Files (*.mp3 *.wav)") );
        player->addToQueue(QUrl::fromLocalFile(fileName));
@@ -83,9 +85,11 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_ui->volumeControl, SIGNAL(valueChanged(int)), this, SLOT(setVolume(int)));
     m_ui->volumeControl->setValue(50);
     m_ui->horizontalSlider->setRange(0, player->control()->duration()/ 10000);
+    //menu options
     connect(m_server, SIGNAL(updateMainWindow(QHostAddress, quint16)), this, SLOT(updateClientList(QHostAddress, quint16)));
     connect(player->control(), SIGNAL(metaDataChanged()), this, SLOT(updateWindowTitle()));
     connect(m_client, SIGNAL(streamMode()), this, SLOT(updateWindowTitle()));
+    connect(m_ui->actionExit, SIGNAL(triggered(bool)), this, SLOT(exit(bool)));
 }
 
 /*------------------------------------------------------------------------------------------------------------------

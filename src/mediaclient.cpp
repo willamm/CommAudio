@@ -59,38 +59,6 @@ MediaClient::MediaClient(QObject *parent) : QObject(parent)
 
 }
 
-/*------------------------------------------------------------------------------------------------------------------
--- FUNCTION: startStream
---
--- DATE: April 10, 2018
---
--- REVISIONS: (Date and Description)
---
--- DESIGNER: Calvin Lai, Matthew Shew
---
--- PROGRAMMER: Calvin Lai, Matthew Shew
---
--- INTERFACE: startStream (void)
---
--- RETURNS: void
---
--- NOTES:
--- Initializes the UDP socket and sets it up to start receiving UDP sockets from server.
-----------------------------------------------------------------------------------------------------------------------*/
-void MediaClient::startStream()
-{
-    if (!ipAddress.isEmpty()) {
-        QHostAddress serverIP(ipAddress);
-        m_client_usock.bind(serverIP, 7755);
-        connect(&m_client_usock, SIGNAL(readyRead()), this, SLOT(readPendingDatagrams()));
-        uconnected = true;
-        emit streamMode();
-    } else {
-        QMessageBox msgBox;
-        msgBox.setText("Please connect to server first.");
-        msgBox.exec();
-    }
-}
 
 /*------------------------------------------------------------------------------------------------------------------
 -- FUNCTION: connectToServer
@@ -124,6 +92,45 @@ void MediaClient::connectToServer() {
     }
 
 }
+
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: startStream
+--
+-- DATE: April 10, 2018
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Calvin Lai, Matthew Shew
+--
+-- PROGRAMMER: Calvin Lai, Matthew Shew
+--
+-- INTERFACE: startStream (void)
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Initializes the UDP socket and sets it up to start receiving UDP sockets from server.
+----------------------------------------------------------------------------------------------------------------------*/
+void MediaClient::startStream()
+{
+    if (!ipAddress.isEmpty()) {
+        QHostAddress serverIP(ipAddress);
+        //m_client_usock.bind(serverIP, 7755);
+
+
+        QHostAddress groupAddress = QHostAddress("239.255.43.21");
+        m_client_usock.bind(QHostAddress::AnyIPv4, 45454, QUdpSocket::ShareAddress);
+        m_client_usock.joinMulticastGroup(groupAddress);
+        connect(&m_client_usock, SIGNAL(readyRead()), this, SLOT(readPendingDatagrams()));
+        uconnected = true;
+        emit streamMode();
+    } else {
+        QMessageBox msgBox;
+        msgBox.setText("Please connect to server first.");
+        msgBox.exec();
+    }
+}
+
 
 void MediaClient::stream() {
 
@@ -224,7 +231,7 @@ void MediaClient::readPendingDatagrams()
 -- Processes incoming audio datagrams.
 ----------------------------------------------------------------------------------------------------------------------*/
 void MediaClient::processStream(QNetworkDatagram datagram) {
-
+    qInfo() << "recv";//datagram.data().toStdString();
 }
 
 /*------------------------------------------------------------------------------------------------------------------
@@ -294,8 +301,6 @@ void MediaClient::request() {
         filePath.append(file);
         outputFile.open(filePath.toStdString(), std::ios_base::binary);
         qInfo() << "File saved as " << filePath << "\n";
-        readyRead();
-
     } else {
         QMessageBox msgBox;
         msgBox.setText("Please connect to server first.");

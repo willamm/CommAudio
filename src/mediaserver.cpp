@@ -52,15 +52,29 @@
 ----------------------------------------------------------------------------------------------------------------------*/
 MediaServer::MediaServer(QObject *parent, int port) : QObject(parent)
 {
-    if (!m_server_tcp.listen(QHostAddress::Any, port))
+    portNum = port;
+    if (!m_server_tcp.listen(QHostAddress::Any, portNum))
     {
         QErrorMessage errMsg;
-        errMsg.showMessage(QString("Error while trying to listen on port %1").arg(port));
+        errMsg.showMessage(QString("Error while trying to listen on port %1").arg(portNum));
     }
     connect(&m_server_tcp, &QTcpServer::newConnection, this, &MediaServer::onNewConnection);
+    //m_server_udp->setSocketOption(QAbstractSocket::MulticastTtlOption, 1);
+    //m_server_udp.bind(QHostAddress::Any, port + 1);
+    //connect(&m_server_udp, SIGNAL(readyRead()), this, SLOT(readyUdp()));
 
-    m_server_udp.bind(QHostAddress::Any, port + 1);
-    connect(&m_server_udp, SIGNAL(readyRead()), this, SLOT(readyUdp()));
+
+
+
+    QThread* thread = new QThread;
+    ServerStream* worker = new ServerStream();
+    worker->moveToThread(thread);
+    connect(worker, SIGNAL(error(QString)), this, SLOT(errorString(QString)));
+    connect(thread, SIGNAL(started()), worker, SLOT(process()));
+    connect(worker, SIGNAL(finished()), thread, SLOT(quit()));
+    connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
+    connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+    thread->start();
 
     qInfo() << "Server ready.\n";
 
@@ -185,13 +199,17 @@ void MediaServer::readyTcp()
 ----------------------------------------------------------------------------------------------------------------------*/
 void MediaServer::readyUdp()
 {
-    QByteArray buffer;
-    buffer.resize(m_server_udp.pendingDatagramSize());
+//    QByteArray buffer;
+//    buffer.resize(m_server_udp.pendingDatagramSize());
 
-    QHostAddress sender;
-    quint16 senderPort;
-    int currSize;
-    currSize = m_server_udp.readDatagram(buffer.data(), buffer.size(), &sender, &senderPort);
+//    QHostAddress sender;
+//    quint16 senderPort;
+//    int currSize;
+//    currSize = m_server_udp.readDatagram(buffer.data(), buffer.size(), &sender, &senderPort);
+
+
+
+
     //outputFile << buffer.toStdString();
     //qInfo() << buffer.toStdString();
 

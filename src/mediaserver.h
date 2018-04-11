@@ -31,7 +31,7 @@
 ----------------------------------------------------------------------------------------------------------------------*/
 #ifndef MEDIASERVER_H
 #define MEDIASERVER_H
-
+#include <QtCore>
 #include <fstream>
 #include <QDir>
 #include <QErrorMessage>
@@ -42,8 +42,10 @@
 #include <QObject>
 #include <QTcpServer>
 #include <QTcpSocket>
-#include <QUdpSocket>
+
 #include <vector>
+
+#include "serverstream.h"
 
 class MediaServer : public QObject
 {
@@ -63,11 +65,9 @@ public slots:
     void readyUdp();
 
 private:
-
+    int portNum;
     QTcpServer m_server_tcp;
-    QUdpSocket m_server_udp;
     std::vector<QTcpSocket*> clients_tcp;
-    std::vector<QUdpSocket*> clients_udp;
 };
 
 #endif // MEDIASERVER_H
