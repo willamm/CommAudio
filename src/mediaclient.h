@@ -40,12 +40,14 @@
 #include <QAudioFormat>
 #include <QAudioOutput>
 #include <QDir>
+#include <QEventLoop>
 #include <QFile>
 #include <QInputDialog>
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QNetworkDatagram>
 #include <QObject>
+#include <QBuffer>
 #include <QTcpSocket>
 #include <QTimer>
 #include <QUdpSocket>
@@ -79,6 +81,7 @@ public slots:
     void readyRead();
     void closeFile();
     void readPendingDatagrams();
+    void playStream();
 
 private:
     QTimer * timer;

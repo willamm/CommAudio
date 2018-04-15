@@ -35,16 +35,20 @@
 #include <QAudioFormat>
 #include <QFile>
 #include <QDir>
+#include <QTcpSocket>
 
 class ServerStream : public QObject
 {
       Q_OBJECT
+
 public:
     explicit ServerStream(QObject *parent = nullptr, int port = 0);
     ~ServerStream();
 
 public slots:
     void process();
+    void tcpCast();
+    void setClients(std::vector<QTcpSocket*>);
 
 signals:
     void finished();
@@ -53,6 +57,7 @@ signals:
 private:
     int portNum;
     QUdpSocket * m_server_udp;
+    std::vector<QTcpSocket*> clients_tcp;
 };
 
 

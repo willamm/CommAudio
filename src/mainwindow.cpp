@@ -70,7 +70,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_ui->actionJoin_session, &QAction::triggered, m_voiceChat, &VoiceChatController::joinSession);
     //client options
     connect(m_ui->actionConnect, &QAction::triggered, m_client, &MediaClient::connectToServer);
-    connect(m_ui->actionListen, &QAction::triggered, m_client, &MediaClient::startStream);
+//    connect(m_ui->actionListen, &QAction::triggered, m_client, &MediaClient::startStream);
+    connect(m_ui->actionListen, &QAction::triggered, m_client, &MediaClient::stream);
     connect(m_ui->actionJoin_Group, &QAction::triggered, m_client, &MediaClient::joinGroup);
     connect(m_ui->actionRequest_2, &QAction::triggered, m_client, &MediaClient::request);
     //media options

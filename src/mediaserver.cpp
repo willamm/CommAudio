@@ -160,14 +160,16 @@ void MediaServer::readyTcp()
 -- Starts a thread to broadcast to all connected clients.
 ----------------------------------------------------------------------------------------------------------------------*/
 void MediaServer::broadcast() {
-    QThread* thread = new QThread;
-    ServerStream* worker = new ServerStream();
-    worker->moveToThread(thread);
-    connect(thread, SIGNAL(started()), worker, SLOT(process()));
-    connect(worker, SIGNAL(finished()), thread, SLOT(quit()));
-    connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
-    connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
-    thread->start();
+    tcpCast();
+//    QThread* thread = new QThread;
+//    ServerStream* worker = new ServerStream();
+//    worker->setClients(clients_tcp);
+//    worker->moveToThread(thread);
+//    connect(thread, SIGNAL(started()), worker, SLOT(tcpCast()));
+//    connect(worker, SIGNAL(finished()), thread, SLOT(quit()));
+//    connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
+//    connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+//    thread->start();
 }
 
 // PUBLIC FUNCTIONS
@@ -216,4 +218,31 @@ bool MediaServer::fileExists(QString path) {
 ----------------------------------------------------------------------------------------------------------------------*/
 std::vector<QTcpSocket*> MediaServer::getClients() {
     return clients_tcp;
+}
+
+void MediaServer::tcpCast() {
+    int arrsize;
+    int pos = 0;
+    int sizeInArray = 8192;
+    QDir dir;
+
+//    QString filePath = QFileDialog::getOpenFileName(, tr("Select a file to Broadcast"), filePath, tr("Audio Files (*.mp3 *.wav)") );
+    QString filePath = dir.homePath() + "/Downloads/Tritonal - Out My Mind.wav";
+    QByteArray data;
+
+    QFile file(filePath);
+    file.open(QIODevice::ReadOnly);
+    data = file.readAll();
+    arrsize = data.size();
+    QList<QByteArray> arrays;
+
+    while(pos < arrsize) {
+        QByteArray arr = data.mid(pos, sizeInArray);
+        arrays << arr;
+        pos += arr.size();
+    }
+
+    for (int i = 0; i < clients_tcp.size(); i++) {
+        clients_tcp.at(i)->write(data);
+    }
 }

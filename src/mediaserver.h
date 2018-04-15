@@ -63,6 +63,7 @@ public slots:
     void onNewConnection();
     void readyTcp();
     void broadcast();
+    void tcpCast();
 
 private:
     int portNum;

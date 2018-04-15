@@ -133,8 +133,35 @@ void MediaClient::startStream()
     }
 }
 
-
 void MediaClient::stream() {
+    qInfo() << "connected stream";
+    connect(&m_client_sock, SIGNAL(readyRead()), this, SLOT(playStream()));
+}
+
+void MediaClient::playStream() {
+
+    qInfo() << "playing";
+    QByteArray data = m_client_sock.readAll();
+    qInfo() << data;
+    QAudioFormat format;
+    format.setSampleRate(44100);
+    format.setChannelCount(2);
+    format.setSampleSize(16);
+    format.setCodec("audio/pcm");
+    format.setByteOrder(QAudioFormat::LittleEndian);
+    format.setSampleType(QAudioFormat::SignedInt);
+
+    QAudioOutput* audio = new QAudioOutput(format);
+    QBuffer buf(&data);
+    buf.open(QIODevice::ReadOnly);
+    audio->setVolume(1.0);
+
+    audio->start(&buf);
+    QEventLoop loop;
+    QObject::connect(audio, SIGNAL(stateChanged(QAudio::State)), &loop, SLOT(quit()));
+    do {
+        loop.exec();
+    } while(audio->state() == QAudio::ActiveState);
 
 }
 
