@@ -1,5 +1,5 @@
 /*------------------------------------------------------------------------------------------------------------------
--- SOURCE FILE: serverstream.cpp
+-- SOURCE FILE: serverstream.h
 --
 -- PROGRAM: Qtify Audio Player
 --

@@ -118,7 +118,7 @@
         </property>
         <property name="icon">
          <iconset>
-          <normaloff>../../../../../../Downloads/noun_72260_cc.png</normaloff>../../../../../../Downloads/noun_72260_cc.png</iconset>
+          <normaloff>../../../../../Downloads/noun_72260_cc.png</normaloff>../../../../../Downloads/noun_72260_cc.png</iconset>
         </property>
         <property name="autoRepeatDelay">
          <number>300</number>
@@ -182,7 +182,7 @@
      <x>0</x>
      <y>0</y>
      <width>806</width>
-     <height>22</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -206,10 +206,10 @@
    </widget>
    <widget class="QMenu" name="menuVoice_chat">
     <property name="title">
-     <string>Voice chat</string>
+     <string>VoIP</string>
     </property>
-    <addaction name="actionStart_session"/>
-    <addaction name="actionJoin_session"/>
+    <addaction name="actionClient"/>
+    <addaction name="actionServer"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -274,6 +274,21 @@
   <action name="actionBroadcast">
    <property name="text">
     <string>Broadcast</string>
+   </property>
+  </action>
+  <action name="actionVoIP_Client">
+   <property name="text">
+    <string>VoIP Client</string>
+   </property>
+  </action>
+  <action name="actionClient">
+   <property name="text">
+    <string>Client</string>
+   </property>
+  </action>
+  <action name="actionServer">
+   <property name="text">
+    <string>Server</string>
    </property>
   </action>
  </widget>
