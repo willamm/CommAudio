@@ -63,6 +63,12 @@ void VoiceChatController::onSessionJoin()
 
     m_socket->connectToHost(ip, port);
 
+    m_audioInput = new QAudioInput(m_format, this);
+    m_audioOutput = new QAudioOutput(m_format, this);
+
+    m_audioOutput->start(m_socket);
+    m_audioInput->start(m_socket);
+
     connect(m_socket, &QTcpSocket::connected, this, &VoiceChatController::onConnected);
 }
 
@@ -73,22 +79,19 @@ void VoiceChatController::quitSession()
 
 void VoiceChatController::onConnected()
 {
-    QAudioInput* input = new QAudioInput(m_format, this);
-    QAudioOutput* output = new QAudioOutput(m_format, this);
-
-    input->start(m_socket);
-    output->start(m_socket);
+    qDebug() << "connected";
 }
 
 void VoiceChatController::onNewConnection()
 {
-    QAudioInput* input = new QAudioInput(m_format, this);
-    QAudioOutput* output = new QAudioOutput(m_format, this);
-
+    qDebug() << "new connection";
     QTcpSocket* clientSocket = m_server->nextPendingConnection();
 
-    input->start(clientSocket);
-    output->start(clientSocket);
+    m_audioInput = new QAudioInput(m_format, this);
+    m_audioOutput = new QAudioOutput(m_format, this);
+
+    m_audioInput->start(clientSocket);
+    m_audioOutput->start(clientSocket);
 }
 
 void VoiceChatController::onReadyRead()

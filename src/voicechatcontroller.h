@@ -79,6 +79,8 @@ signals:
 private:
     Ui::VoiceChatController *ui;
     QAudioFormat m_format;
+    QAudioInput* m_audioInput;
+    QAudioOutput* m_audioOutput;
 
 
     QTcpServer* m_server;
