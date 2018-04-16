@@ -7,13 +7,17 @@ SOURCES += main.cpp mainwindow.cpp \
     utilities.cpp \
     mplayer.cpp \
     mediaclient.cpp \
-    serverstream.cpp
+    serverstream.cpp \
+    voipclient.cpp \
+    voipserver.cpp
 HEADERS += mainwindow.h \
     mediaserver.h \
     voicechatcontroller.h \
     utilities.h \
     mplayer.h \
     mediaclient.h \
-    serverstream.h
+    serverstream.h \
+    voipclient.h \
+    voipserver.h
 FORMS += mainwindow.ui \
     voicechatcontroller.ui
