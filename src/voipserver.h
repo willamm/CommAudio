@@ -14,6 +14,7 @@ class VoipServer : public QObject
     Q_OBJECT
 public:
     explicit VoipServer(const ushort port, const QAudioFormat &format, QObject *parent = nullptr);
+    virtual ~VoipServer();
 
 signals:
 
@@ -22,7 +23,11 @@ public slots:
     void onReadyRead();
     void handleOutputStateChange(QAudio::State);
 
+    void stopAllAudio();
+
 private:
+    QByteArray m_byteBuffer;
+    QBuffer* m_buffer;
     QTcpServer* m_server;
     QTcpSocket* m_client;
 

@@ -3,20 +3,26 @@
 VoipServer::VoipServer(const ushort port, const QAudioFormat& format, QObject *parent)
     : QObject(parent),
       m_server(new QTcpServer(this)),
-      m_audioInput(new QAudioInput(QAudioDeviceInfo::defaultInputDevice(), format, this)),
-      m_audioOutput(new QAudioOutput(QAudioDeviceInfo::defaultOutputDevice(), format, this))
+      m_audioInput(new QAudioInput(format, this)),
+      m_audioOutput(new QAudioOutput(format, this)),
+      m_buffer(new QBuffer(this))
 {
+    if (!m_buffer->open(QIODevice::ReadWrite))
+    {
+        qDebug() << "Failed to open buffer";
+        return;
+    }
+    m_buffer->setBuffer(&m_byteBuffer);
     connect(m_server, &QTcpServer::newConnection, this, &VoipServer::onNewConnection);
     connect(m_audioOutput, &QAudioOutput::stateChanged, this, &VoipServer::handleOutputStateChange);
-    connect(m_audioOutput, &QAudioOutput::notify, this, [this]() {
-        qDebug() << "notify signal fired";
-
-
-    });
-    m_audioInput->setBufferSize(44100);
-    m_audioOutput->setBufferSize(0);
-    m_audioOutput->setNotifyInterval(128);
     m_server->listen(QHostAddress::Any, port);
+}
+
+VoipServer::~VoipServer()
+{
+    m_audioInput->stop();
+    m_audioOutput->stop();
+    m_server->close();
 }
 
 void VoipServer::onNewConnection()
@@ -28,6 +34,9 @@ void VoipServer::onNewConnection()
     connect(m_client, &QTcpSocket::disconnected, this, &QObject::deleteLater);
     connect(m_client, &QTcpSocket::readyRead, this, &VoipServer::onReadyRead);
     connect(m_client, &QTcpSocket::bytesWritten, this, [this](qint64 bytes){ qDebug() << "server bytes written: " << bytes;});
+
+    // Start reading from port
+    m_audioOutput->start(m_client);
 }
 
 void VoipServer::onReadyRead()
@@ -38,11 +47,18 @@ void VoipServer::onReadyRead()
     if (m_client->bytesAvailable())
     {
         //qDebug() << m_client->readAll();
-        m_audioOutput->start(m_client);
+        //m_byteBuffer.append(m_client->readAll());
+
     }
 }
 
 void VoipServer::handleOutputStateChange(QAudio::State state)
 {
-   qDebug() << "server output state: " << state;
+    qDebug() << "server output state: " << state;
+}
+
+void VoipServer::stopAllAudio()
+{
+    m_audioInput->stop();
+    m_audioOutput->stop();
 }

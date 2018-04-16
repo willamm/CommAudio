@@ -44,6 +44,8 @@
 #include <QFile>
 
 #include "utilities.h"
+#include "voipclient.h"
+#include "voipserver.h"
 
 namespace Ui {
 class VoiceChatController;
@@ -76,7 +78,14 @@ signals:
 
 private:
     Ui::VoiceChatController *ui;
-    QAudioFormat* m_format;
+    QAudioFormat m_format;
+
+
+    QTcpServer* m_server;
+    QTcpSocket* m_socket;
+
+//    VoipClient* m_client;
+  //  VoipServer* m_server;
 };
 
 

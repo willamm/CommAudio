@@ -12,6 +12,7 @@ class VoipClient : public QObject
     Q_OBJECT
 public:
     explicit VoipClient(const QString& serverIP, const short& portNumber, const QAudioFormat& format, QObject *parent = nullptr);
+    virtual ~VoipClient();
 
 signals:
 
@@ -19,6 +20,8 @@ public slots:
     void onConnected();
     void onReadyRead();
     void handleInputStateChange(QAudio::State state);
+
+    void stopAllAudio();
 
 private:
     char* buffer;

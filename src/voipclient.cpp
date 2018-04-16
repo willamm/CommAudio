@@ -8,7 +8,6 @@ VoipClient::VoipClient(const QString &serverIP, const short &portNumber, const Q
       m_serverIp(serverIP),
       m_portNumber(portNumber)
 {
-    m_socket->setReadBufferSize(44100);
     connect(m_socket, &QTcpSocket::connected, this, &VoipClient::onConnected);
     connect(m_socket, &QTcpSocket::readyRead, this, &VoipClient::onReadyRead);
     connect(m_socket, &QTcpSocket::bytesWritten, this, [this](qint64 bytes) {qDebug() << "client bytes written: " << bytes;});
@@ -23,6 +22,13 @@ VoipClient::VoipClient(const QString &serverIP, const short &portNumber, const Q
     m_socket->connectToHost(m_serverIp, m_portNumber);
 }
 
+VoipClient::~VoipClient()
+{
+    m_audioInput->stop();
+    m_audioOutput->stop();
+    m_socket->close();
+}
+
 void VoipClient::onConnected()
 {
     qDebug() << "Connected";
@@ -33,10 +39,19 @@ void VoipClient::onReadyRead()
 {
     qDebug() << "Ready read";
     // write data received to the audio output device
-    m_audioOutput->start(m_socket);
 }
 
 void VoipClient::handleInputStateChange(QAudio::State state)
 {
    qDebug() << "client input state: " << state;
+   switch(state)
+   {
+
+   }
+}
+
+void VoipClient::stopAllAudio()
+{
+    m_audioInput->stop();
+    m_audioOutput->stop();
 }
