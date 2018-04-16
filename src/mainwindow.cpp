@@ -501,7 +501,37 @@ void MainWindow::playStream(QByteArray audioPacket) {
     format.setSampleType(QAudioFormat::SignedInt);
     audio = new QAudioOutput(format, this);
     QBuffer buffer(&audioPacket);
-    buffer.open(QBuffer::ReadWrite);
+    buffer.open(QIODevice::ReadOnly);
     audio->start(&buffer);
+    QEventLoop loop;
+    QObject::connect(audio, SIGNAL(stateChanged(QAudio::State)), &loop, SLOT(quit()));
+
+    do {
+        loop.exec();
+    } while(audio->state() == QAudio::ActiveState);
+
+
+//        QAudioFormat format;
+//        QAudioOutput* audio;
+
+//        format.setSampleRate(44100);
+//        format.setChannelCount(2);
+//        format.setSampleSize(16);
+//        format.setCodec("audio/pcm");
+//        format.setByteOrder(QAudioFormat::LittleEndian);
+//        format.setSampleType(QAudioFormat::SignedInt);
+//        audio = new QAudioOutput(format, this);
+//        QBuffer buffer(&audioPacket);
+//        buffer.open(QBuffer::ReadWrite);
+//        audio->start(&buffer);
+//    //    loop.exec();
+//        QEventLoop loop;
+//        QObject::connect(audio, SIGNAL(stateChanged(QAudio::State)), &loop, SLOT(quit()));
+//        do {
+//            loop.exec();
+//        } while(audio->state() == QAudio::ActiveState);
+
+
+
 
 }

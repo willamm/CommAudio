@@ -42,6 +42,7 @@
 #include <QObject>
 #include <QTcpServer>
 #include <QTcpSocket>
+#include <QAudioOutput>
 
 #include <vector>
 

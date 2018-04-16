@@ -32,9 +32,11 @@
 
 #include <QUdpSocket>
 #include <QAudioInput>
+#include <QTcpSocket>
 #include <QAudioFormat>
 #include <QFile>
 #include <QDir>
+#include <vector>
 
 class ServerStream : public QObject
 {
@@ -42,6 +44,7 @@ class ServerStream : public QObject
 public:
     explicit ServerStream(QObject *parent = nullptr, int port = 0);
     ~ServerStream();
+    void setSockets(std::vector<QTcpSocket*> sockets);
 
 public slots:
     void process();
@@ -53,6 +56,7 @@ signals:
 private:
     int portNum;
     QUdpSocket * m_server_udp;
+    std::vector<QTcpSocket*> * clients_tcp;
 };
 
 

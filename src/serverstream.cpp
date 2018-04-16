@@ -99,11 +99,11 @@ ServerStream::~ServerStream()
 void ServerStream::process() {
     int arrsize;
     int pos = 0;
-    int sizeInArray = 8192;
+    int sizeInArray = 50000;
     QDir dir;
 
-//    QString filePath = QFileDialog::getOpenFileName(, tr("Select a file to Broadcast"), filePath, tr("Audio Files (*.mp3 *.wav)") );
-    QString filePath = dir.homePath() + "/Downloads/Tritonal Out My Mind.wav";
+    //QString filePath = QFileDialog::getOpenFileName(, tr("Select a file to Broadcast"), filePath, tr("Audio Files (*.mp3 *.wav)") );
+    QString filePath = dir.homePath() + "/Music/EitherWay.wav";
     QByteArray data;
 
     QFile file(filePath);
@@ -125,11 +125,53 @@ void ServerStream::process() {
     qInfo() << "Multicasting\n";
     while (1) {
         for (int i = 0; i < arrays.size(); i++) {
-//            m_server_udp->writeDatagram(data.data(), data.size(), groupAddress, 45454);
-                        m_server_udp->writeDatagram(arrays.at(i).data(), arrays.at(i).size(), groupAddress, 45454);
+            //m_server_udp->writeDatagram(data.data(), data.size(), groupAddress, 45454);
+            m_server_udp->writeDatagram(arrays.at(i).data(), arrays.at(i).size(), groupAddress, 45454);
+                        //qInfo() << arrays.at(i).data();
 
         }
     }
-//    emit finished();
+    //emit finished();
+
+//    QDir dir;
+
+//    qInfo() << "3";
+//    QString filePath = dir.homePath() + "/Music/EitherWay.wav";
+//    QFile file(filePath);
+//    file.open(QIODevice::ReadOnly);
+
+//    int size = (int) clients_tcp->size();
+//    qInfo() << "4";
+//    for(int i = 0; i < size; i++) {
+
+//        QByteArray byteArr;
+//        byteArr = file.readAll();
+//        qInfo() << "5";
+//        clients_tcp->at(i)->write(byteArr);
+//        qInfo() << "6";
+//        qInfo() << "File successfully sent to " << clients_tcp->at(i)->peerAddress().toString() << "\n";
+//    }
+
+//    file.close();
+
+
+
+
+
+
+
+
+
+
 }
+
+
+
+void ServerStream::setSockets(std::vector<QTcpSocket *> sockets) {
+    clients_tcp = new std::vector<QTcpSocket *>(sockets);
+}
+
+
+
+
 

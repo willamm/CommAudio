@@ -95,174 +95,8 @@ void MediaClient::connectToServer() {
 
 }
 
-/*------------------------------------------------------------------------------------------------------------------
--- FUNCTION: startStream
---
--- DATE: April 10, 2018
---
--- REVISIONS: (Date and Description)
---
--- DESIGNER: Calvin Lai, Matthew Shew
---
--- PROGRAMMER: Calvin Lai, Matthew Shew
---
--- INTERFACE: startStream (void)
---
--- RETURNS: void
---
--- NOTES:
--- Initializes the UDP socket and sets it up to start receiving UDP sockets from server.
-----------------------------------------------------------------------------------------------------------------------*/
-void MediaClient::startStream()
-{
-    if (!ipAddress.isEmpty()) {
-        QHostAddress serverIP(ipAddress);
-        //m_client_usock.bind(serverIP, 7755);
 
 
-        QHostAddress groupAddress = QHostAddress("239.255.43.21");
-        m_client_usock.bind(QHostAddress::AnyIPv4, 45454, QUdpSocket::ShareAddress);
-        m_client_usock.joinMulticastGroup(groupAddress);
-        connect(&m_client_usock, SIGNAL(readyRead()), this, SLOT(readPendingDatagrams()));
-        uconnected = true;
-        emit streamMode();
-    } else {
-        QMessageBox msgBox;
-        msgBox.setText("Please connect to server first.");
-        msgBox.exec();
-    }
-}
-
-
-void MediaClient::stream() {
-
-}
-
-/*------------------------------------------------------------------------------------------------------------------
--- FUNCTION: readyRead
---
--- DATE: April 10, 2018
---
--- REVISIONS: (Date and Description)
---
--- DESIGNER: Matthew Shew
---
--- PROGRAMMER: Matthew Shew
---
--- INTERFACE: readyRead (void)
---
--- RETURNS: void
---
--- NOTES:
--- Called when data is received by the TCP socket, saves data to specified output file. Starts a timer in case of
--- time out.
-----------------------------------------------------------------------------------------------------------------------*/
-void MediaClient::readyRead()
-{
-    outputFile << m_client_sock.readAll().toStdString();
-    timer->start(2000);
-}
-
-/*------------------------------------------------------------------------------------------------------------------
--- FUNCTION: closeFile
---
--- DATE: April 10, 2018
---
--- REVISIONS: (Date and Description)
---
--- DESIGNER: Matthew Shew
---
--- PROGRAMMER: Matthew Shew
---
--- INTERFACE: closeFile (void)
---
--- RETURNS: void
---
--- NOTES:
--- Closes the output file.
-----------------------------------------------------------------------------------------------------------------------*/
-void MediaClient::closeFile()
-{
-    outputFile.close();
-}
-
-/*------------------------------------------------------------------------------------------------------------------
--- FUNCTION: readPendingDatagrams
---
--- DATE: April 10, 2018
---
--- REVISIONS: (Date and Description)
---
--- DESIGNER: Calvin Lai, Matthew Shew
---
--- PROGRAMMER: Calvin Lai
---
--- INTERFACE: readPendingDatagrams (void)
---
--- RETURNS: void
---
--- NOTES:
--- Receives pending datagrams and processes them.
-----------------------------------------------------------------------------------------------------------------------*/
-void MediaClient::readPendingDatagrams()
-{
-    if (uconnected) {
-        while (m_client_usock.hasPendingDatagrams()) {
-            QNetworkDatagram datagram = m_client_usock.receiveDatagram();
-            processStream(datagram);
-        }
-    }
-}
-
-/*------------------------------------------------------------------------------------------------------------------
--- FUNCTION: processStream
---
--- DATE: April 10, 2018
---
--- REVISIONS: (Date and Description)
---
--- DESIGNER: Calvin Lai
---
--- PROGRAMMER: Calvin Lai
---
--- INTERFACE: processStream (void)
---
--- RETURNS: void
---
--- NOTES:
--- Processes incoming audio datagrams.
-----------------------------------------------------------------------------------------------------------------------*/
-void MediaClient::processStream(QNetworkDatagram datagram) {
-    qInfo() << datagram.data().data();
-    QByteArray audioPacket = datagram.data();
-    emit playStream(audioPacket);
-}
-
-/*------------------------------------------------------------------------------------------------------------------
--- FUNCTION: joinGroup
---
--- DATE: April 10, 2018
---
--- REVISIONS: (Date and Description)
---
--- DESIGNER: Calvin Lai
---
--- PROGRAMMER: Calvin Lai
---
--- INTERFACE: joinGroup (void)
---
--- RETURNS: void
---
--- NOTES:
--- Called to join a multicast group.
-----------------------------------------------------------------------------------------------------------------------*/
-void MediaClient::joinGroup() {
-    if (ipAddress.isEmpty()) {
-        QMessageBox msgBox;
-        msgBox.setText("Please connect to server first.");
-        msgBox.exec();
-    }
-}
 
 /*------------------------------------------------------------------------------------------------------------------
 -- FUNCTION: request
@@ -313,6 +147,287 @@ void MediaClient::request() {
         msgBox.exec();
     }
 }
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: startStream
+--
+-- DATE: April 10, 2018
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Calvin Lai, Matthew Shew
+--
+-- PROGRAMMER: Calvin Lai, Matthew Shew
+--
+-- INTERFACE: startStream (void)
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Initializes the UDP socket and sets it up to start receiving UDP sockets from server.
+----------------------------------------------------------------------------------------------------------------------*/
+void MediaClient::startStream()
+{
+    if (!ipAddress.isEmpty()) {
+
+        QDir dir;
+        QString filePath = dir.homePath() + "/Documents/streamFile.wav";
+
+        outputFile.open(filePath.toStdString(), std::ios_base::binary);
+
+        streamOn = true;
+        connect(&m_client_sock, SIGNAL(readyRead()), this, SLOT(readyRead()));
+        connect(timer, SIGNAL(timeout()), this, SLOT(closeFile()));
+        //------------------
+        QAudioFormat format;
+        format.setSampleRate(44100);
+        format.setChannelCount(2);
+        format.setSampleSize(16);
+        format.setCodec("audio/pcm");
+        format.setByteOrder(QAudioFormat::LittleEndian);
+        format.setSampleType(QAudioFormat::SignedInt);
+        audio = new QAudioOutput(format, this);
+        audio->setBufferSize(8192);
+
+
+        device = audio->start();
+
+        //------------------
+
+        emit streamMode();
+    } else {
+        QMessageBox msgBox;
+        msgBox.setText("Please connect to server first.");
+        msgBox.exec();
+    }
+}
+
+
+void MediaClient::stream() {
+
+}
+
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: readyRead
+--
+-- DATE: April 10, 2018
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Matthew Shew
+--
+-- PROGRAMMER: Matthew Shew
+--
+-- INTERFACE: readyRead (void)
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Called when data is received by the TCP socket, saves data to specified output file. Starts a timer in case of
+-- time out.
+----------------------------------------------------------------------------------------------------------------------*/
+void MediaClient::readyRead()
+{
+
+    if (streamOn) {
+        outputFile << m_client_sock.readAll().toStdString();
+        timer->start(2000);
+
+        //QByteArray data = m_client_sock.readAll();
+
+        //data.resize(m_client_usock.pendingDatagramSize());
+        //m_client_usock.readDatagram(data.data(), data.size());
+//        QBuffer *buffer = new QBuffer(data);
+//        //QEventLoop *loop = new QEventLoop(this);
+//        buffer->open(QIODevice::ReadOnly);
+//        audio->start(buffer);
+
+        //loop->exec();
+        //timer->start(2000);
+    } else {
+        qInfo() << "recv2";
+        outputFile << m_client_sock.readAll().toStdString();
+        timer->start(2000);
+    }
+
+}
+
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: closeFile
+--
+-- DATE: April 10, 2018
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Matthew Shew
+--
+-- PROGRAMMER: Matthew Shew
+--
+-- INTERFACE: closeFile (void)
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Closes the output file.
+----------------------------------------------------------------------------------------------------------------------*/
+void MediaClient::closeFile()
+{
+    if (streamOn) {
+        outputFile.close();
+        QAudioOutput* audioOutpu;
+
+
+
+        QAudioFormat format;
+        format.setSampleRate(44100);
+        format.setChannelCount(2);
+        format.setSampleSize(16);
+        format.setCodec("audio/pcm");
+        format.setByteOrder(QAudioFormat::LittleEndian);
+        format.setSampleType(QAudioFormat::SignedInt);
+
+
+
+        QDir dir;
+        QString filePath = dir.homePath() + "/Documents/streamFile.wav";
+        QFile file(filePath);
+        file.open(QIODevice::ReadOnly);
+
+
+
+
+        audioOutpu = new QAudioOutput(format);
+        audioOutpu->setVolume(1.0);
+
+        audioOutpu->start(&file);
+        //qDebug() << "ok";
+        QEventLoop loop;
+        QObject::connect(audioOutpu, SIGNAL(stateChanged(QAudio::State)), &loop, SLOT(quit()));
+        do {
+            loop.exec();
+        } while(audioOutpu->state() == QAudio::ActiveState);
+        file.remove();
+        streamOn = false;
+
+    } else {
+        outputFile.close();
+    }
+
+}
+
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: readPendingDatagrams
+--
+-- DATE: April 10, 2018
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Calvin Lai, Matthew Shew
+--
+-- PROGRAMMER: Calvin Lai
+--
+-- INTERFACE: readPendingDatagrams (void)
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Receives pending datagrams and processes them.
+----------------------------------------------------------------------------------------------------------------------*/
+void MediaClient::readPendingDatagrams()
+{
+    if (uconnected) {
+        while (m_client_usock.hasPendingDatagrams()) {
+//            QNetworkDatagram datagram = m_client_usock.receiveDatagram();
+//            processStream(datagram);
+
+
+            QByteArray data;
+            data.resize(m_client_usock.pendingDatagramSize());
+            //m_client_usock.readDatagram(data.data(), data.size());
+            //device->write(data.data(), data.size());
+            QNetworkDatagram datagram = m_client_usock.receiveDatagram();
+            device->write(datagram.data(), datagram.data().size());
+
+            //qInfo() << data.data();
+        }
+
+
+
+    }
+}
+
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: processStream
+--
+-- DATE: April 10, 2018
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Calvin Lai
+--
+-- PROGRAMMER: Calvin Lai
+--
+-- INTERFACE: processStream (void)
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Processes incoming audio datagrams.
+----------------------------------------------------------------------------------------------------------------------*/
+void MediaClient::processStream(QNetworkDatagram datagram) {
+    qInfo() << datagram.data().data();
+    QByteArray audioPacket = datagram.data();
+    //emit playStream(audioPacket);
+
+    //--------------------------------------
+    QAudioFormat format;
+
+
+//    format.setSampleRate(44100);
+//    format.setChannelCount(2);
+//    format.setSampleSize(16);
+//    format.setCodec("audio/pcm");
+//    format.setByteOrder(QAudioFormat::LittleEndian);
+//    format.setSampleType(QAudioFormat::SignedInt);
+//    audio = new QAudioOutput(format, this);
+//    QBuffer buffer(&audioPacket);
+//    buffer.open(QIODevice::ReadOnly);
+//    audio->start(&buffer);
+//    QEventLoop loop;
+//    QObject::connect(audio, SIGNAL(stateChanged(QAudio::State)), &loop, SLOT(quit()));
+
+//    do {
+//        loop.exec();
+//    } while(audio->state() == QAudio::ActiveState);
+
+
+}
+
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: joinGroup
+--
+-- DATE: April 10, 2018
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Calvin Lai
+--
+-- PROGRAMMER: Calvin Lai
+--
+-- INTERFACE: joinGroup (void)
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Called to join a multicast group.
+----------------------------------------------------------------------------------------------------------------------*/
+void MediaClient::joinGroup() {
+    if (ipAddress.isEmpty()) {
+        QMessageBox msgBox;
+        msgBox.setText("Please connect to server first.");
+        msgBox.exec();
+    }
+}
+
 
 
 /*------------------------------------------------------------------------------------------------------------------

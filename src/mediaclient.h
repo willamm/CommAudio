@@ -50,6 +50,10 @@
 #include <QTimer>
 #include <QUdpSocket>
 #include <string.h>
+#include <QIODevice>
+#include <QAudioOutput>
+#include <QBuffer>
+#include <QEventLoop>
 
 class MediaClient : public QObject
 {
@@ -85,8 +89,11 @@ private:
     QTcpSocket m_client_sock;
     QUdpSocket m_client_usock;
     QString ipAddress;
+    QIODevice *device;
+    QAudioOutput* audio;
     bool connected;
     bool uconnected;
+    bool streamOn;
 //    QAudioOutput* audio;
 //    QFile sourceFile;
 
