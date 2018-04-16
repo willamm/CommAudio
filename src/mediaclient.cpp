@@ -272,7 +272,22 @@ void MediaClient::closeFile()
         streamOn = false;
 
     } else {
+
         outputFile.close();
+        QString filePath = dir.homePath() + "/Documents/";
+        filePath.append(fileName);
+        QFile file(filePath);
+        file.open(QIODevice::ReadOnly);
+        if (file.size() == 0) {
+            file.remove();
+            QMessageBox msgBox;
+            msgBox.setText("File does not exist! Request another file.");
+            msgBox.exec();
+        } else {
+            file.close();
+        }
+
+
     }
 
 }
