@@ -36,11 +36,22 @@
         </layout>
        </item>
        <item>
-        <widget class="QPushButton" name="startSessionBtn">
-         <property name="text">
-          <string>Start session</string>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QPushButton" name="quitSession">
+           <property name="text">
+            <string>Quit</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="startSessionBtn">
+           <property name="text">
+            <string>Start session</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>
@@ -67,6 +78,24 @@
          </item>
          <item row="1" column="1">
           <widget class="QLineEdit" name="portLineEdit"/>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QPushButton" name="quit">
+           <property name="text">
+            <string>Quit</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="joinSession">
+           <property name="text">
+            <string>Join session</string>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
