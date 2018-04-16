@@ -61,7 +61,6 @@ class MediaClient : public QObject
 
 public:
     explicit MediaClient(QObject *parent = nullptr);
-    void stream();
     void processStream(QNetworkDatagram datagram);
     void joinGroup();
     void request();

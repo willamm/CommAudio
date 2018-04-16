@@ -44,7 +44,6 @@ class ServerStream : public QObject
 public:
     explicit ServerStream(QObject *parent = nullptr, int port = 0);
     ~ServerStream();
-    void setSockets(std::vector<QTcpSocket*> sockets);
 
 public slots:
     void process();

@@ -167,7 +167,6 @@ void MediaClient::request() {
 void MediaClient::startStream()
 {
     if (!ipAddress.isEmpty()) {
-
         QDir dir;
         QString filePath = dir.homePath() + "/Documents/streamFile.wav";
         outputFile.close();
@@ -184,10 +183,6 @@ void MediaClient::startStream()
     }
 }
 
-
-void MediaClient::stream() {
-
-}
 
 /*------------------------------------------------------------------------------------------------------------------
 -- FUNCTION: readyRead
@@ -210,16 +205,13 @@ void MediaClient::stream() {
 ----------------------------------------------------------------------------------------------------------------------*/
 void MediaClient::readyRead()
 {
-
     if (streamOn) {
         outputFile << m_client_sock.readAll().toStdString();
         timer->start(2000);
-
     } else {
         outputFile << m_client_sock.readAll().toStdString();
         timer->start(2000);
     }
-
 }
 
 /*------------------------------------------------------------------------------------------------------------------
@@ -246,7 +238,6 @@ void MediaClient::closeFile()
     if (streamOn) {
         outputFile.close();
         QAudioOutput* audioOutpu;
-
         QAudioFormat format;
         format.setSampleRate(44100);
         format.setChannelCount(2);
@@ -254,14 +245,11 @@ void MediaClient::closeFile()
         format.setCodec("audio/pcm");
         format.setByteOrder(QAudioFormat::LittleEndian);
         format.setSampleType(QAudioFormat::SignedInt);
-
         QString filePath = dir.homePath() + "/Documents/streamFile.wav";
         QFile file(filePath);
         file.open(QIODevice::ReadOnly);
-
         audioOutpu = new QAudioOutput(format);
         audioOutpu->setVolume(1.0);
-
         audioOutpu->start(&file);
         QEventLoop loop;
         QObject::connect(audioOutpu, SIGNAL(stateChanged(QAudio::State)), &loop, SLOT(quit()));
@@ -270,9 +258,7 @@ void MediaClient::closeFile()
         } while(audioOutpu->state() == QAudio::ActiveState);
         file.remove();
         streamOn = false;
-
     } else {
-
         outputFile.close();
         QString filePath = dir.homePath() + "/Documents/";
         filePath.append(fileName);
@@ -286,10 +272,7 @@ void MediaClient::closeFile()
         } else {
             file.close();
         }
-
-
     }
-
 }
 
 /*------------------------------------------------------------------------------------------------------------------
@@ -301,7 +284,7 @@ void MediaClient::closeFile()
 --
 -- DESIGNER: Calvin Lai, Matthew Shew
 --
--- PROGRAMMER: Calvin Lai
+-- PROGRAMMER: Calvin Lai, Matthew Shew
 --
 -- INTERFACE: readPendingDatagrams (void)
 --
@@ -314,22 +297,11 @@ void MediaClient::readPendingDatagrams()
 {
     if (uconnected) {
         while (m_client_usock.hasPendingDatagrams()) {
-//            QNetworkDatagram datagram = m_client_usock.receiveDatagram();
-//            processStream(datagram);
-
-
             QByteArray data;
             data.resize(m_client_usock.pendingDatagramSize());
-            //m_client_usock.readDatagram(data.data(), data.size());
-            //device->write(data.data(), data.size());
             QNetworkDatagram datagram = m_client_usock.receiveDatagram();
             device->write(datagram.data(), datagram.data().size());
-
-            //qInfo() << data.data();
         }
-
-
-
     }
 }
 
@@ -340,9 +312,9 @@ void MediaClient::readPendingDatagrams()
 --
 -- REVISIONS: (Date and Description)
 --
--- DESIGNER: Calvin Lai
+-- DESIGNER: Calvin Lai, Matthew Shew
 --
--- PROGRAMMER: Calvin Lai
+-- PROGRAMMER: Calvin Lai, Matthew Shew
 --
 -- INTERFACE: processStream (void)
 --

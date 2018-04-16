@@ -131,47 +131,9 @@ void ServerStream::process() {
 
         }
     }
-    //emit finished();
-
-//    QDir dir;
-
-//    qInfo() << "3";
-//    QString filePath = dir.homePath() + "/Music/EitherWay.wav";
-//    QFile file(filePath);
-//    file.open(QIODevice::ReadOnly);
-
-//    int size = (int) clients_tcp->size();
-//    qInfo() << "4";
-//    for(int i = 0; i < size; i++) {
-
-//        QByteArray byteArr;
-//        byteArr = file.readAll();
-//        qInfo() << "5";
-//        clients_tcp->at(i)->write(byteArr);
-//        qInfo() << "6";
-//        qInfo() << "File successfully sent to " << clients_tcp->at(i)->peerAddress().toString() << "\n";
-//    }
-
-//    file.close();
-
-
-
-
-
-
-
-
 
 
 }
-
-
-
-void ServerStream::setSockets(std::vector<QTcpSocket *> sockets) {
-    clients_tcp = new std::vector<QTcpSocket *>(sockets);
-}
-
-
 
 
 

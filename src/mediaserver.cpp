@@ -121,23 +121,18 @@ void MediaServer::readyTcp()
         QString temp = clients_tcp.at(i)->readAll();
         filePath.append(temp);
         qInfo() << filePath;
-
         if (fileExists(filePath)) {
             QFile file(filePath);
-
             file.open(QIODevice::ReadOnly);
-
             QByteArray byteArr;
             byteArr = file.readAll();
             clients_tcp.at(i)->write(byteArr);
-
             file.close();
             qInfo() << "File successfully sent to " << clients_tcp.at(i)->peerAddress().toString() << "\n";
         } else {
             QMessageBox msgBox;
             msgBox.setText("File does not exist, please request another file.");
             msgBox.exec();
-
         }
     }
 }
