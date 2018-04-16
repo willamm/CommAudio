@@ -1,6 +1,8 @@
 #include "voicechatcontroller.h"
 #include "ui_voicechatcontroller.h"
 
+#define VOIP_PORT 7777
+
 VoiceChatController::VoiceChatController(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::VoiceChatController),
@@ -8,6 +10,7 @@ VoiceChatController::VoiceChatController(QWidget *parent) :
     m_socket(new QTcpSocket(this))
 {
     ui->setupUi(this);
+
     // for WAV audio
     m_format.setSampleRate(44100);
     m_format.setChannelCount(2);
@@ -52,7 +55,7 @@ void VoiceChatController::joinSession()
 void VoiceChatController::onSessionStart()
 {
     //m_server = new VoipServer(7777, *m_format, this);
-    m_server->listen(QHostAddress::Any, 7777);
+    m_server->listen(QHostAddress::Any, VOIP_PORT);
 }
 
 void VoiceChatController::onSessionJoin()
@@ -65,9 +68,9 @@ void VoiceChatController::onSessionJoin()
     m_socket->connectToHost(ip, port);
 
     m_audioInput = new QAudioInput(m_format, this);
-    m_audioOutput = new QAudioOutput(m_format, this);
+   // m_audioOutput = new QAudioOutput(m_format, this);
 
-    m_audioOutput->start(m_socket);
+  //  m_audioOutput->start(m_socket);
     m_audioInput->start(m_socket);
 
     connect(m_socket, &QTcpSocket::connected, this, &VoiceChatController::onConnected);
@@ -92,7 +95,6 @@ void VoiceChatController::onNewConnection()
 
     m_audioInput = new QAudioInput(m_format, this);
 
-
     m_audioInput->start(clientSocket);
 }
 
@@ -100,7 +102,7 @@ void VoiceChatController::onReadyRead()
 {
     QTcpSocket* sender = (QTcpSocket*) QObject::sender();
 
-    if (sender->peerAddress() != m_socket->peerAddress())
+    if (sender != m_socket)
     {
         m_audioOutput = new QAudioOutput(m_format, this);
         m_audioOutput->start(sender);
