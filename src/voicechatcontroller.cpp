@@ -22,6 +22,7 @@ VoiceChatController::VoiceChatController(QWidget *parent) :
     connect(ui->quitSession, &QPushButton::clicked, this, &VoiceChatController::quitSession);
 
     connect(m_server, &QTcpServer::newConnection, this, &VoiceChatController::onNewConnection);
+    connect(m_socket, &QTcpSocket::readyRead, this, &VoiceChatController::onReadyRead);
 
     // Default client parameters for debugging purposes
     ui->iPAddressLineEdit->setText("127.0.0.1");
@@ -87,15 +88,20 @@ void VoiceChatController::onNewConnection()
     qDebug() << "new connection";
     QTcpSocket* clientSocket = m_server->nextPendingConnection();
 
+    connect(clientSocket, &QTcpSocket::readyRead, this, &VoiceChatController::onReadyRead);
+
     m_audioInput = new QAudioInput(m_format, this);
-    m_audioOutput = new QAudioOutput(m_format, this);
+
 
     m_audioInput->start(clientSocket);
-    m_audioOutput->start(clientSocket);
 }
 
 void VoiceChatController::onReadyRead()
 {
+    QTcpSocket* sender = (QTcpSocket*) QObject::sender();
+
+    m_audioOutput = new QAudioOutput(m_format, this);
+    m_audioOutput->start(sender);
 }
 void VoiceChatController::onAudioStateChange(QAudio::State state)
 {
