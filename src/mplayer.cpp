@@ -110,9 +110,11 @@ void mPlayer::play() {
     if (playing) {
         player->pause();
         playing = false;
+        emit stateChanged();
     } else {
         player->play();
         playing = true;
+        emit stateChanged();
     }
 }
 

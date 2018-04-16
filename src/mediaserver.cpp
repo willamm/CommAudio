@@ -160,25 +160,12 @@ void MediaServer::readyTcp()
 -- Starts a thread to broadcast to all connected clients.
 ----------------------------------------------------------------------------------------------------------------------*/
 void MediaServer::broadcast() {
-//    QThread* thread = new QThread;
-//    ServerStream* worker = new ServerStream();
-//    worker->setSockets(clients_tcp);
-//    worker->moveToThread(thread);
-//    connect(thread, SIGNAL(started()), worker, SLOT(process()));
-//    connect(worker, SIGNAL(finished()), thread, SLOT(quit()));
-//    connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
-//    connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
-//    thread->start();
-
-
-
-
-
     QDir dir;
-    QString filePath = dir.homePath() + "/Music/EitherWay.wav";
+    QString filePath = dir.homePath() + "/Documents/";
+    QString fileName = QFileDialog::getOpenFileName(NULL, tr("Open file"), filePath, tr("Audio Files (*.mp3 *.wav)") );
     QByteArray data;
 
-    QFile file(filePath);
+    QFile file(fileName);
     file.open(QIODevice::ReadOnly);
     data = file.readAll();
 
@@ -188,46 +175,6 @@ void MediaServer::broadcast() {
         clients_tcp.at(i)->write(data);
     }
     file.close();
-
-
-
-//        QAudioOutput* audioOutpu;
-
-
-
-//       QAudioFormat format;
-//       format.setSampleRate(44100);
-//       format.setChannelCount(2);
-//       format.setSampleSize(16);
-//       format.setCodec("audio/pcm");
-//       format.setByteOrder(QAudioFormat::LittleEndian);
-//       format.setSampleType(QAudioFormat::SignedInt);
-
-
-
-//        QDir dir;
-//        QString filePath = dir.homePath() + "/Music/EitherWay.wav";
-//        QFile file(filePath);
-//        file.open(QIODevice::ReadOnly);
-
-
-
-
-//       audioOutpu = new QAudioOutput(format);
-//       audioOutpu->setVolume(1.0);
-
-//       audioOutpu->start(&file);
-//       qDebug() << "ok";
-//       QEventLoop loop;
-//       QObject::connect(audioOutpu, SIGNAL(stateChanged(QAudio::State)), &loop, SLOT(quit()));
-//       do {
-//           loop.exec();
-//       } while(audioOutpu->state() == QAudio::ActiveState);
-
-
-//        qDebug() << "done";
-
-
 }
 
 // PUBLIC FUNCTIONS

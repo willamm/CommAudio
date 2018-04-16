@@ -64,6 +64,7 @@ MainWindow::MainWindow(QWidget *parent)
     QString filePath = dir.homePath() + "/Documents/";
     m_ui->setupUi(this);
 
+    connect(player, SIGNAL(stateChanged()), this, SLOT(updateWindowTitle()));
     connect(this, SIGNAL(addedMedia()), this, SLOT(updatePlayList()));
     //chat options
     connect(m_ui->actionStart_session, &QAction::triggered, m_voiceChat, &VoiceChatController::hostSession);
@@ -359,9 +360,10 @@ void MainWindow::updateDurationInfo(double currentInfoD)
 -- Updates the playlist widget with the song title and album artist of thew newly added media file.
 ----------------------------------------------------------------------------------------------------------------------*/
 void MainWindow::updatePlayList() {
-    QTreeWidgetItem *playlistItem = new QTreeWidgetItem(m_ui->playList);
-    playlistItem->setText(0, player->control()->metaData(QMediaMetaData::Title).toString());
-    playlistItem->setText(1, player->control()->metaData(QMediaMetaData::Author).toString());
+//    QTreeWidgetItem *playlistItem = new QTreeWidgetItem(m_ui->playList);
+//    QString song = "Song " + tracks;
+//    playlistItem->setText(0, song);
+//    tracks++;
 }
 
 /*------------------------------------------------------------------------------------------------------------------
@@ -466,6 +468,7 @@ void MainWindow::playRequest(QString filePath) {
     player->getPlaylist()->clear();
     player->addToQueue(QUrl::fromLocalFile(filePath));
     player->next();
+    player->play();
     emit addedMedia();
 }
 
@@ -489,7 +492,6 @@ void MainWindow::playRequest(QString filePath) {
 -- Plays the streamed packet from the server.
 ----------------------------------------------------------------------------------------------------------------------*/
 void MainWindow::playStream(QByteArray audioPacket) {
-//    QEventLoop loop;
     QAudioFormat format;
     QAudioOutput* audio;
 
@@ -509,29 +511,4 @@ void MainWindow::playStream(QByteArray audioPacket) {
     do {
         loop.exec();
     } while(audio->state() == QAudio::ActiveState);
-
-
-//        QAudioFormat format;
-//        QAudioOutput* audio;
-
-//        format.setSampleRate(44100);
-//        format.setChannelCount(2);
-//        format.setSampleSize(16);
-//        format.setCodec("audio/pcm");
-//        format.setByteOrder(QAudioFormat::LittleEndian);
-//        format.setSampleType(QAudioFormat::SignedInt);
-//        audio = new QAudioOutput(format, this);
-//        QBuffer buffer(&audioPacket);
-//        buffer.open(QBuffer::ReadWrite);
-//        audio->start(&buffer);
-//    //    loop.exec();
-//        QEventLoop loop;
-//        QObject::connect(audio, SIGNAL(stateChanged(QAudio::State)), &loop, SLOT(quit()));
-//        do {
-//            loop.exec();
-//        } while(audio->state() == QAudio::ActiveState);
-
-
-
-
 }

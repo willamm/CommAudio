@@ -92,11 +92,7 @@ void MediaClient::connectToServer() {
         m_client_sock.connectToHost(ipAddress, 5150);
         connected = true;
     }
-
 }
-
-
-
 
 /*------------------------------------------------------------------------------------------------------------------
 -- FUNCTION: request
@@ -171,29 +167,13 @@ void MediaClient::startStream()
 
         QDir dir;
         QString filePath = dir.homePath() + "/Documents/streamFile.wav";
-
+        outputFile.close();
         outputFile.open(filePath.toStdString(), std::ios_base::binary);
 
         streamOn = true;
         connect(&m_client_sock, SIGNAL(readyRead()), this, SLOT(readyRead()));
         connect(timer, SIGNAL(timeout()), this, SLOT(closeFile()));
-        //------------------
-        QAudioFormat format;
-        format.setSampleRate(44100);
-        format.setChannelCount(2);
-        format.setSampleSize(16);
-        format.setCodec("audio/pcm");
-        format.setByteOrder(QAudioFormat::LittleEndian);
-        format.setSampleType(QAudioFormat::SignedInt);
-        audio = new QAudioOutput(format, this);
-        audio->setBufferSize(8192);
 
-
-        device = audio->start();
-
-        //------------------
-
-        emit streamMode();
     } else {
         QMessageBox msgBox;
         msgBox.setText("Please connect to server first.");
@@ -232,19 +212,7 @@ void MediaClient::readyRead()
         outputFile << m_client_sock.readAll().toStdString();
         timer->start(2000);
 
-        //QByteArray data = m_client_sock.readAll();
-
-        //data.resize(m_client_usock.pendingDatagramSize());
-        //m_client_usock.readDatagram(data.data(), data.size());
-//        QBuffer *buffer = new QBuffer(data);
-//        //QEventLoop *loop = new QEventLoop(this);
-//        buffer->open(QIODevice::ReadOnly);
-//        audio->start(buffer);
-
-        //loop->exec();
-        //timer->start(2000);
     } else {
-        qInfo() << "recv2";
         outputFile << m_client_sock.readAll().toStdString();
         timer->start(2000);
     }
@@ -275,8 +243,6 @@ void MediaClient::closeFile()
         outputFile.close();
         QAudioOutput* audioOutpu;
 
-
-
         QAudioFormat format;
         format.setSampleRate(44100);
         format.setChannelCount(2);
@@ -285,21 +251,15 @@ void MediaClient::closeFile()
         format.setByteOrder(QAudioFormat::LittleEndian);
         format.setSampleType(QAudioFormat::SignedInt);
 
-
-
         QDir dir;
         QString filePath = dir.homePath() + "/Documents/streamFile.wav";
         QFile file(filePath);
         file.open(QIODevice::ReadOnly);
 
-
-
-
         audioOutpu = new QAudioOutput(format);
         audioOutpu->setVolume(1.0);
 
         audioOutpu->start(&file);
-        //qDebug() << "ok";
         QEventLoop loop;
         QObject::connect(audioOutpu, SIGNAL(stateChanged(QAudio::State)), &loop, SLOT(quit()));
         do {
@@ -376,30 +336,7 @@ void MediaClient::readPendingDatagrams()
 void MediaClient::processStream(QNetworkDatagram datagram) {
     qInfo() << datagram.data().data();
     QByteArray audioPacket = datagram.data();
-    //emit playStream(audioPacket);
-
-    //--------------------------------------
     QAudioFormat format;
-
-
-//    format.setSampleRate(44100);
-//    format.setChannelCount(2);
-//    format.setSampleSize(16);
-//    format.setCodec("audio/pcm");
-//    format.setByteOrder(QAudioFormat::LittleEndian);
-//    format.setSampleType(QAudioFormat::SignedInt);
-//    audio = new QAudioOutput(format, this);
-//    QBuffer buffer(&audioPacket);
-//    buffer.open(QIODevice::ReadOnly);
-//    audio->start(&buffer);
-//    QEventLoop loop;
-//    QObject::connect(audio, SIGNAL(stateChanged(QAudio::State)), &loop, SLOT(quit()));
-
-//    do {
-//        loop.exec();
-//    } while(audio->state() == QAudio::ActiveState);
-
-
 }
 
 /*------------------------------------------------------------------------------------------------------------------

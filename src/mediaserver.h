@@ -43,6 +43,7 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QAudioOutput>
+#include <QFileDialog>
 
 #include <vector>
 

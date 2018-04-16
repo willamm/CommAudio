@@ -86,6 +86,7 @@ private:
     QString fileName;
     quint64 duration;
     bool playing;
+    int tracks;
 };
 
 #endif // MAINWINDOW_H

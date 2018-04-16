@@ -45,6 +45,9 @@ public:
     QMediaPlaylist* getPlaylist();
     bool addToQueue(const QMediaContent &content);
 
+signals:
+    void stateChanged();
+
 public slots:
     void play();
     void next();

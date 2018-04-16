@@ -37,20 +37,6 @@
        <number>6</number>
       </property>
       <item>
-       <widget class="QTreeWidget" name="playList">
-        <column>
-         <property name="text">
-          <string>Song Title</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Artist</string>
-         </property>
-        </column>
-       </widget>
-      </item>
-      <item>
        <widget class="QTreeWidget" name="clientList">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -204,9 +190,7 @@
      <string>File</string>
     </property>
     <addaction name="actionAdd_file"/>
-    <addaction name="actionAdd_folder"/>
     <addaction name="separator"/>
-    <addaction name="actionAdd_server"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
@@ -214,17 +198,11 @@
      <string>Stream</string>
     </property>
     <addaction name="actionConnect"/>
-    <addaction name="actionRequest_2"/>
     <addaction name="separator"/>
+    <addaction name="actionRequest_2"/>
     <addaction name="actionListen"/>
-    <addaction name="actionJoin_Group"/>
     <addaction name="separator"/>
     <addaction name="actionBroadcast"/>
-   </widget>
-   <widget class="QMenu" name="menuHelp">
-    <property name="title">
-     <string>Help</string>
-    </property>
    </widget>
    <widget class="QMenu" name="menuVoice_chat">
     <property name="title">
@@ -233,16 +211,9 @@
     <addaction name="actionStart_session"/>
     <addaction name="actionJoin_session"/>
    </widget>
-   <widget class="QMenu" name="menuSettings">
-    <property name="title">
-     <string>Settings</string>
-    </property>
-   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
    <addaction name="menuVoice_chat"/>
-   <addaction name="menuSettings"/>
-   <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionAdd_file">
