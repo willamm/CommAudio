@@ -100,8 +100,11 @@ void VoiceChatController::onReadyRead()
 {
     QTcpSocket* sender = (QTcpSocket*) QObject::sender();
 
-    m_audioOutput = new QAudioOutput(m_format, this);
-    m_audioOutput->start(sender);
+    if (sender->peerAddress() != m_socket->peerAddress())
+    {
+        m_audioOutput = new QAudioOutput(m_format, this);
+        m_audioOutput->start(sender);
+    }
 }
 void VoiceChatController::onAudioStateChange(QAudio::State state)
 {
