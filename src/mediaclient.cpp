@@ -91,6 +91,9 @@ void MediaClient::connectToServer() {
         });
         m_client_sock.connectToHost(ipAddress, 5150);
         connected = true;
+        QMessageBox msgBox;
+        msgBox.setText("Connected to Server!");
+        msgBox.exec();
     }
 }
 
@@ -239,6 +242,7 @@ void MediaClient::readyRead()
 ----------------------------------------------------------------------------------------------------------------------*/
 void MediaClient::closeFile()
 {
+    QDir dir;
     if (streamOn) {
         outputFile.close();
         QAudioOutput* audioOutpu;
@@ -251,7 +255,6 @@ void MediaClient::closeFile()
         format.setByteOrder(QAudioFormat::LittleEndian);
         format.setSampleType(QAudioFormat::SignedInt);
 
-        QDir dir;
         QString filePath = dir.homePath() + "/Documents/streamFile.wav";
         QFile file(filePath);
         file.open(QIODevice::ReadOnly);

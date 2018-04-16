@@ -76,6 +76,7 @@ signals:
     void streamMode();
     void mediaLoaded(QString);
     void playStream(QByteArray);
+    void connectionEstablished();
 
 public slots:
     void startStream();

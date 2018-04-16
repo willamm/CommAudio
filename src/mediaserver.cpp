@@ -115,7 +115,7 @@ void MediaServer::onNewConnection()
 void MediaServer::readyTcp()
 {
     QDir dir;
-    QString filePath = dir.homePath() + "/Downloads/";
+    QString filePath = dir.homePath() + "/Documents/";
     int size = (int) clients_tcp.size();
     for(int i = 0; i < size; i++) {
         QString temp = clients_tcp.at(i)->readAll();
@@ -137,6 +137,7 @@ void MediaServer::readyTcp()
             QMessageBox msgBox;
             msgBox.setText("File does not exist, please request another file.");
             msgBox.exec();
+
         }
     }
 }
