@@ -237,6 +237,12 @@ void VoiceChatController::onSessionJoin()
 ----------------------------------------------------------------------------------------------------------------------*/
 void VoiceChatController::quitSession()
 {
+    QList<quint32> connections = m_clients.keys();
+    for (quint32 i : connections) {
+        m_clients[i]->close();
+        m_inputs[i]->stop();
+        m_outputs[i]->stop();
+    }
     m_server->close();
     QDialog::close();
 }
