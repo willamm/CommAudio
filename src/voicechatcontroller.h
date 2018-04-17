@@ -42,10 +42,7 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QFile>
-
-#include "utilities.h"
-#include "voipclient.h"
-#include "voipserver.h"
+#include <QMap>
 
 namespace Ui {
 class VoiceChatController;
@@ -66,26 +63,21 @@ public slots:
 private slots:
     void onNewConnection();
     void onReadyRead();
-    void onAudioStateChange(QAudio::State state);
     void onSessionStart();
     void onSessionJoin();
     void quitSession();
     void onConnected();
 
-signals:
-    void sessionStarted();
-    void sessionJoined();
-
 private:
     Ui::VoiceChatController *ui;
+
     QAudioFormat m_format;
 
-
     QTcpServer* m_server;
-    QTcpSocket* m_socket;
 
-//    VoipClient* m_client;
-  //  VoipServer* m_server;
+    QMap<quint32, QTcpSocket*> m_clients;
+    QMap<quint32, QAudioInput*> m_inputs;
+    QMap<quint32, QAudioOutput*> m_outputs;
 };
 
 
