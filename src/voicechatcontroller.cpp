@@ -295,12 +295,12 @@ void VoiceChatController::onNewConnection()
     QTcpSocket* clientSocket = m_server->nextPendingConnection();
     quint32 clientAddress = clientSocket->peerAddress().toIPv4Address();
 
-    if (m_clients.contains(clientAddress))
-    {
-        clientSocket->close();
-        clientSocket->deleteLater();
-        return;
-    }
+//    if (m_clients.contains(clientAddress))
+//    {
+//        clientSocket->close();
+//        clientSocket->deleteLater();
+//        return;
+//    }
 
     connect(clientSocket, &QTcpSocket::readyRead, this, &VoiceChatController::onReadyRead);
 
