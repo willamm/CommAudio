@@ -249,6 +249,9 @@ void VoiceChatController::quitSession()
         m_clients[i]->close();
 
     }
+    m_clients.clear();
+    m_outputs.clear();
+    m_inputs.clear();
     m_server->close();
     QDialog::close();
 }
