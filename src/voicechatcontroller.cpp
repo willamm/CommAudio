@@ -65,11 +65,9 @@ void VoiceChatController::onSessionJoin()
 
     QHostAddress host(ip);
     quint32 ipToHost = host.toIPv4Address();
-    if (m_clients.contains(ipToHost))
-    {
-        return;
-    }
+
     QTcpSocket* socket = new QTcpSocket(this);
+
     socket->connectToHost(host, port);
 
     connect(socket, &QTcpSocket::readyRead, this, &VoiceChatController::onReadyRead);
@@ -112,7 +110,6 @@ void VoiceChatController::onNewConnection()
 void VoiceChatController::onReadyRead()
 {
     QTcpSocket* sender = (QTcpSocket*) QObject::sender();
-
     quint32 senderAddress = sender->peerAddress().toIPv4Address();
     if (!m_clients.contains(senderAddress))
     {
