@@ -206,11 +206,6 @@ void VoiceChatController::onSessionJoin()
     QHostAddress host(ip);
     quint32 ipToHost = host.toIPv4Address();
 
-    if (m_clients.contains(ipToHost))
-    {
-        return;
-    }
-
     QTcpSocket* socket = new QTcpSocket(this);
 
     socket->connectToHost(host, port);
@@ -244,9 +239,10 @@ void VoiceChatController::quitSession()
 {
     QList<quint32> connections = m_clients.keys();
     for (quint32 i : connections) {
-        m_clients[i]->close();
         m_inputs[i]->stop();
         m_outputs[i]->stop();
+        m_clients[i]->close();
+
     }
     m_server->close();
     QDialog::close();
