@@ -208,6 +208,11 @@ void VoiceChatController::onSessionJoin()
 
     QTcpSocket* socket = new QTcpSocket(this);
 
+    if (m_clients.contains(ipToHost))
+    {
+        return;
+    }
+
     socket->connectToHost(host, port);
 
     connect(socket, &QTcpSocket::readyRead, this, &VoiceChatController::onReadyRead);
