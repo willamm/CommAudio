@@ -111,10 +111,11 @@ void VoiceChatController::onReadyRead()
 {
     QTcpSocket* sender = (QTcpSocket*) QObject::sender();
     quint32 senderAddress = sender->peerAddress().toIPv4Address();
-
+    if (!m_outputs.contains(senderAddress))
+    {
         m_outputs[senderAddress] = new QAudioOutput(m_format, this);
         m_outputs[senderAddress]->start(m_clients[senderAddress]);
-
+    }
 }
 void VoiceChatController::onAudioStateChange(QAudio::State state)
 {
