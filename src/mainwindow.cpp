@@ -67,8 +67,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(player, SIGNAL(stateChanged()), this, SLOT(updateWindowTitle()));
     connect(this, SIGNAL(addedMedia()), this, SLOT(updatePlayList()));
     //chat options
-    connect(m_ui->actionStart_session, &QAction::triggered, m_voiceChat, &VoiceChatController::hostSession);
-    connect(m_ui->actionJoin_session, &QAction::triggered, m_voiceChat, &VoiceChatController::joinSession);
+    connect(m_ui->actionServer, &QAction::triggered, m_voiceChat, &VoiceChatController::hostSession);
+    connect(m_ui->actionClient, &QAction::triggered, m_voiceChat, &VoiceChatController::joinSession);
     //client options
     connect(m_ui->actionConnect, &QAction::triggered, m_client, &MediaClient::connectToServer);
     connect(m_ui->actionListen, &QAction::triggered, m_client, &MediaClient::startStream);

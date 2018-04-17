@@ -238,7 +238,7 @@ void VoiceChatController::onSessionJoin()
 void VoiceChatController::quitSession()
 {
     m_server->close();
-
+    QDialog::close();
 }
 
 /*------------------------------------------------------------------------------------------------------------------
