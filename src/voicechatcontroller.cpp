@@ -206,6 +206,11 @@ void VoiceChatController::onSessionJoin()
     QHostAddress host(ip);
     quint32 ipToHost = host.toIPv4Address();
 
+    if (m_clients.contains(ipToHost))
+    {
+        return;
+    }
+
     QTcpSocket* socket = new QTcpSocket(this);
 
     socket->connectToHost(host, port);
