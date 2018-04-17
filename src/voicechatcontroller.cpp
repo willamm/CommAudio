@@ -6,8 +6,7 @@
 VoiceChatController::VoiceChatController(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::VoiceChatController),
-    m_server(new QTcpServer(this)),
-    m_socket(new QTcpSocket(this))
+    m_server(new QTcpServer(this))
 {
     ui->setupUi(this);
 
@@ -25,7 +24,6 @@ VoiceChatController::VoiceChatController(QWidget *parent) :
     connect(ui->quitSession, &QPushButton::clicked, this, &VoiceChatController::quitSession);
 
     connect(m_server, &QTcpServer::newConnection, this, &VoiceChatController::onNewConnection);
-    connect(m_socket, &QTcpSocket::readyRead, this, &VoiceChatController::onReadyRead);
 
     // Default client parameters for debugging purposes
     ui->iPAddressLineEdit->setText("127.0.0.1");
@@ -63,17 +61,19 @@ void VoiceChatController::onSessionJoin()
     // Create a VoIP client with the IP address and port passed into the constructor
     QString ip = ui->iPAddressLineEdit->text();
     ushort port = ui->portLineEdit->text().toUShort();
-    //m_client = new VoipClient(ip, port, *m_format, this);
 
-    m_socket->connectToHost(ip, port);
+    QTcpSocket* socket = new QTcpSocket(this);
 
-    m_audioInput = new QAudioInput(m_format, this);
-   // m_audioOutput = new QAudioOutput(m_format, this);
+    socket->connectToHost(ip, port);
 
-  //  m_audioOutput->start(m_socket);
-    m_audioInput->start(m_socket);
+    quint32 ipToHost = socket->peerAddress().toIPv4Address();
 
-    connect(m_socket, &QTcpSocket::connected, this, &VoiceChatController::onConnected);
+    m_clients[ipToHost] = socket;
+    m_inputs[ipToHost] = new QAudioInput(m_format, this);
+    m_inputs[ipToHost]->start(m_clients[ipToHost]);
+
+    connect(socket, &QTcpSocket::readyRead, this, &VoiceChatController::onReadyRead);
+
 }
 
 void VoiceChatController::quitSession()
@@ -90,22 +90,30 @@ void VoiceChatController::onNewConnection()
 {
     qDebug() << "new connection";
     QTcpSocket* clientSocket = m_server->nextPendingConnection();
+    quint32 clientAddress = clientSocket->peerAddress().toIPv4Address();
 
+    if (m_clients.contains(clientAddress))
+    {
+        clientSocket->close();
+        clientSocket->deleteLater();
+        return;
+    }
     connect(clientSocket, &QTcpSocket::readyRead, this, &VoiceChatController::onReadyRead);
 
-    m_audioInput = new QAudioInput(m_format, this);
-
-    m_audioInput->start(clientSocket);
+    m_clients[clientAddress] = clientSocket;
+    m_inputs[clientAddress] = new QAudioInput(m_format, this);
+    m_inputs[clientAddress]->start(clientSocket);
 }
 
 void VoiceChatController::onReadyRead()
 {
     QTcpSocket* sender = (QTcpSocket*) QObject::sender();
 
-    if (sender != m_socket)
+    quint32 senderAddress = sender->peerAddress().toIPv4Address();
+    if (!m_clients.contains(senderAddress))
     {
-        m_audioOutput = new QAudioOutput(m_format, this);
-        m_audioOutput->start(sender);
+        m_outputs[senderAddress] = new QAudioOutput(m_format, this);
+        m_outputs[senderAddress]->start(sender);
     }
 }
 void VoiceChatController::onAudioStateChange(QAudio::State state)

@@ -42,10 +42,7 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QFile>
-
-#include "utilities.h"
-#include "voipclient.h"
-#include "voipserver.h"
+#include <QMap>
 
 namespace Ui {
 class VoiceChatController;
@@ -80,15 +77,12 @@ private:
     Ui::VoiceChatController *ui;
 
     QAudioFormat m_format;
-    QAudioInput* m_audioInput;
-    QAudioOutput* m_audioOutput;
-
 
     QTcpServer* m_server;
-    QTcpSocket* m_socket;
 
-//    VoipClient* m_client;
-  //  VoipServer* m_server;
+    QMap<quint32, QTcpSocket*> m_clients;
+    QMap<quint32, QAudioInput*> m_inputs;
+    QMap<quint32, QAudioOutput*> m_outputs;
 };
 
 
