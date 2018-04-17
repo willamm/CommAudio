@@ -63,15 +63,10 @@ public slots:
 private slots:
     void onNewConnection();
     void onReadyRead();
-    void onAudioStateChange(QAudio::State state);
     void onSessionStart();
     void onSessionJoin();
     void quitSession();
     void onConnected();
-
-signals:
-    void sessionStarted();
-    void sessionJoined();
 
 private:
     Ui::VoiceChatController *ui;
